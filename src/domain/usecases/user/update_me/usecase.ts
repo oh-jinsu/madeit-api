@@ -9,7 +9,7 @@ import {
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimGrade, ClaimModel } from "src/domain/models/claim";
+import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
 import { UserRepository } from "src/domain/repositories/user";
 import { UserResult } from "src/domain/results/user";
@@ -40,10 +40,6 @@ export class UpdateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
     private readonly userRepository: UserRepository,
   ) {
     super(authProvider);
-  }
-
-  protected assertGrade(grade: ClaimGrade): boolean {
-    return grade === "member";
   }
 
   protected async executeWithAuth(

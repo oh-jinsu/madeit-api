@@ -9,7 +9,6 @@ describe("test the upload image usecase", () => {
 
   authProvider.extractClaim.mockResolvedValue({
     id: "an id",
-    grade: "member",
   });
 
   const imageRepository = new MockImageRepository();

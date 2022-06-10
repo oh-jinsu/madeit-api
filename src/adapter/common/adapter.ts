@@ -62,11 +62,6 @@ export abstract class AbstractController {
           status: 401,
           message: "유효하지 않은 인증정보입니다.",
         };
-      case 104:
-        return {
-          status: 403,
-          message: "권한이 없습니다.",
-        };
       default:
         return (
           this.inform(code) ?? {

@@ -13,7 +13,6 @@ describe("Try to sign up with apple", () => {
 
   authProvider.extractClaim.mockResolvedValue({
     id: "an id",
-    grade: "guest",
   });
 
   authProvider.issueAccessToken.mockResolvedValue("an access token");

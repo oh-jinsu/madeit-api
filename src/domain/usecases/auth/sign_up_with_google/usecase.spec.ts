@@ -13,7 +13,6 @@ describe("Try to sign up with google", () => {
 
   authProvider.extractClaim.mockResolvedValue({
     id: "an id",
-    grade: "guest",
   });
 
   authProvider.issueAccessToken.mockResolvedValue("an access token");

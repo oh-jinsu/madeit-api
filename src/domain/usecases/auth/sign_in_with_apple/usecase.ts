@@ -47,14 +47,12 @@ export class SignInWithAppleUseCase
 
     const accessToken = await this.authProvider.issueAccessToken({
       sub: id,
-      grade: "member",
     });
 
     await this.authRepository.update(id, { accessToken });
 
     const refreshToken = await this.authProvider.issueRefreshToken({
       sub: id,
-      grade: "member",
     });
 
     const hashedRefreshToken = await this.hashProvider.encode(refreshToken);

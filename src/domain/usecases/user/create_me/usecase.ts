@@ -5,7 +5,7 @@ import {
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimGrade, ClaimModel } from "src/domain/models/claim";
+import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
 import { ImageRepository } from "src/domain/repositories/image";
 import { UserRepository } from "src/domain/repositories/user";
@@ -26,10 +26,6 @@ export class CreateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
     private readonly imageRepository: ImageRepository,
   ) {
     super(authProvider);
-  }
-
-  protected assertGrade(grade: ClaimGrade): boolean {
-    return grade === "member";
   }
 
   protected async executeWithAuth(

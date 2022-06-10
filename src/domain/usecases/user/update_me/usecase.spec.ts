@@ -8,7 +8,7 @@ describe("Try to update me", () => {
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id", grade: "member" });
+  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
 
   const userRepository = new MockUserRepository();
 
@@ -53,23 +53,6 @@ describe("Try to update me", () => {
     }
 
     expect(result.code).toBe(102);
-  });
-
-  it("should fail for a forbidden user", async () => {
-    authProvider.extractClaim.mockResolvedValueOnce({
-      id: "an id",
-      grade: "guest",
-    });
-
-    const accessToken = "an access token";
-
-    const result = await usecase.execute({ accessToken, dtos: [] });
-
-    if (!result.isException()) {
-      fail();
-    }
-
-    expect(result.code).toBe(104);
   });
 
   it("should fail for an absent user", async () => {

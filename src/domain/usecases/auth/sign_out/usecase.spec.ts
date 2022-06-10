@@ -8,7 +8,7 @@ describe("test a sign out usecase", () => {
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id", grade: "member" });
+  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
 
   const authRepository = new MockAuthRepository();
 

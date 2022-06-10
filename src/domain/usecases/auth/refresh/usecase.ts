@@ -32,7 +32,7 @@ export class RefreshAuthUseCase implements UseCase<Params, Result> {
       return new UseCaseException(1);
     }
 
-    const { id, grade } = await this.authProvider.extractClaim(refreshToken);
+    const { id } = await this.authProvider.extractClaim(refreshToken);
 
     const option = await this.authRepository.findOne(id);
 
@@ -57,7 +57,6 @@ export class RefreshAuthUseCase implements UseCase<Params, Result> {
       ? oldone
       : await this.authProvider.issueAccessToken({
           sub: id,
-          grade,
         });
 
     if (accessToken !== oldone) {

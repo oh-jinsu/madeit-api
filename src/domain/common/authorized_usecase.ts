@@ -1,4 +1,4 @@
-import { ClaimGrade, ClaimModel } from "../models/claim";
+import { ClaimModel } from "../models/claim";
 import { AuthProvider } from "../providers/auth";
 import { UseCase } from "./usecase";
 import { UseCaseException, UseCaseResult } from "./usecase_result";
@@ -23,16 +23,7 @@ export abstract class AuthorizedUseCase<T extends AuthorizedUseCaseParams, K>
 
     const claim = await this.authProvider.extractClaim(accessToken);
 
-    if (!this.assertGrade(claim.grade)) {
-      return new UseCaseException(104);
-    }
-
     return this.executeWithAuth(claim, params);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected assertGrade(grade: ClaimGrade): boolean {
-    return true;
   }
 
   protected abstract executeWithAuth(

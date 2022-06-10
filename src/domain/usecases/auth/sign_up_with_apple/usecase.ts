@@ -5,7 +5,7 @@ import {
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimGrade, ClaimModel } from "src/domain/models/claim";
+import { ClaimModel } from "src/domain/models/claim";
 import { AppleAuthProvider } from "src/domain/providers/apple_auth";
 import { AuthProvider } from "src/domain/providers/auth";
 import { HashProvider } from "src/domain/providers/hash";
@@ -33,10 +33,6 @@ export class SignUpWithAppleUseCase extends AuthorizedUseCase<
     super(authProvider);
   }
 
-  protected assertGrade(grade: ClaimGrade): boolean {
-    return grade === "guest";
-  }
-
   async executeWithAuth(
     { id }: ClaimModel,
     { idToken }: Params,
@@ -62,14 +58,12 @@ export class SignUpWithAppleUseCase extends AuthorizedUseCase<
 
     const accessToken = await this.authProvider.issueAccessToken({
       sub: id,
-      grade: "member",
     });
 
     await this.authRepository.update(id, { accessToken });
 
     const refreshToken = await this.authProvider.issueRefreshToken({
       sub: id,
-      grade: "member",
     });
 
     const hashedRefreshToken = await this.hashProvider.encode(refreshToken);

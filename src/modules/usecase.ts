@@ -1,6 +1,5 @@
 import { Global, Module } from "@nestjs/common";
 import { DeleteAuthUseCase } from "src/domain/usecases/auth/delete/usecase";
-import { IssueGuestTokenUseCase } from "src/domain/usecases/auth/guest/usecase";
 import { RefreshAuthUseCase } from "src/domain/usecases/auth/refresh/usecase";
 import { SignInWithAppleUseCase } from "src/domain/usecases/auth/sign_in_with_apple/usecase";
 import { SignInWithGoogleUseCase } from "src/domain/usecases/auth/sign_in_with_google/usecase";
@@ -11,7 +10,6 @@ import { VerifyAuthUseCase } from "src/domain/usecases/auth/verify/usecase";
 import { UploadImageUseCase } from "src/domain/usecases/image/upload/usecase";
 import { CreateRoomUseCase } from "src/domain/usecases/room/create/usecase";
 import { FindRoomsUseCase } from "src/domain/usecases/room/find/usecase";
-import { CreateGuestUseCase } from "src/domain/usecases/user/create_guest/usecase";
 import { CreateMeUseCase } from "src/domain/usecases/user/create_me/usecase";
 import { FindMeUseCase } from "src/domain/usecases/user/find_me/usecase";
 import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
@@ -21,7 +19,6 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
   providers: [
     VerifyAuthUseCase,
     DeleteAuthUseCase,
-    IssueGuestTokenUseCase,
     RefreshAuthUseCase,
     SignInWithGoogleUseCase,
     SignInWithAppleUseCase,
@@ -29,7 +26,6 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     SignUpWithAppleUseCase,
     SignOutUseCase,
     // Auth Module
-    CreateGuestUseCase,
     CreateMeUseCase,
     FindMeUseCase,
     UpdateMeUseCase,
@@ -43,7 +39,6 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
   exports: [
     VerifyAuthUseCase,
     DeleteAuthUseCase,
-    IssueGuestTokenUseCase,
     RefreshAuthUseCase,
     SignInWithGoogleUseCase,
     SignInWithAppleUseCase,
@@ -51,7 +46,6 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     SignUpWithAppleUseCase,
     SignOutUseCase,
     // Auth Module
-    CreateGuestUseCase,
     CreateMeUseCase,
     FindMeUseCase,
     UpdateMeUseCase,
