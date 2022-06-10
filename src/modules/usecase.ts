@@ -8,6 +8,7 @@ import { SignOutUseCase } from "src/domain/usecases/auth/sign_out/usecase";
 import { SignUpWithAppleUseCase } from "src/domain/usecases/auth/sign_up_with_apple/usecase";
 import { SignUpWithGoogleUseCase } from "src/domain/usecases/auth/sign_up_with_google/usecase";
 import { VerifyAuthUseCase } from "src/domain/usecases/auth/verify/usecase";
+import { UploadImageUseCase } from "src/domain/usecases/image/upload/usecase";
 import { CreateGuestUseCase } from "src/domain/usecases/user/create_guest/usecase";
 import { CreateMeUseCase } from "src/domain/usecases/user/create_me/usecase";
 import { FindMeUseCase } from "src/domain/usecases/user/find_me/usecase";
@@ -31,6 +32,8 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     FindMeUseCase,
     UpdateMeUseCase,
     // User Module
+    UploadImageUseCase,
+    // Image Module
   ],
   exports: [
     VerifyAuthUseCase,
@@ -48,6 +51,8 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     FindMeUseCase,
     UpdateMeUseCase,
     // User Module
+    UploadImageUseCase,
+    // Image Module
   ],
 })
 export class UseCaseModule {}

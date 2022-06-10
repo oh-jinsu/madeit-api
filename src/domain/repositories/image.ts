@@ -3,7 +3,6 @@ import { ImageModel } from "../models/image";
 
 export type SaveImageDto = {
   userId: string;
-  preffix: string;
   buffer: Buffer;
   mimetype: string;
 };
