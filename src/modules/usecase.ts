@@ -8,6 +8,8 @@ import { SignUpWithAppleUseCase } from "src/domain/usecases/auth/sign_up_with_ap
 import { SignUpWithGoogleUseCase } from "src/domain/usecases/auth/sign_up_with_google/usecase";
 import { VerifyAuthUseCase } from "src/domain/usecases/auth/verify/usecase";
 import { UploadImageUseCase } from "src/domain/usecases/image/upload/usecase";
+import { CreateParticipantUseCase } from "src/domain/usecases/participant/create/usecase";
+import { DeleteParticipantUseCase } from "src/domain/usecases/participant/delete/usecase";
 import { CreateRoomUseCase } from "src/domain/usecases/room/create/usecase";
 import { FindRoomsUseCase } from "src/domain/usecases/room/find/usecase";
 import { CreateMeUseCase } from "src/domain/usecases/user/create_me/usecase";
@@ -33,6 +35,9 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     FindRoomsUseCase,
     CreateRoomUseCase,
     // Room Module
+    CreateParticipantUseCase,
+    DeleteParticipantUseCase,
+    // Participant Module
     UploadImageUseCase,
     // Image Module
   ],
@@ -53,6 +58,9 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     FindRoomsUseCase,
     CreateRoomUseCase,
     // Room Module
+    CreateParticipantUseCase,
+    DeleteParticipantUseCase,
+    // Participant Module
     UploadImageUseCase,
     // Image Module
   ],

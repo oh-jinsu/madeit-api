@@ -51,6 +51,15 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
 
     const room = roomOption.value;
 
+    const participantOption = await this.participantRepository.findOne(
+      user.id,
+      room.id,
+    );
+
+    if (participantOption.isSome()) {
+      return new UseCaseException(3);
+    }
+
     const participant = await this.participantRepository.create(
       user.id,
       room.id,

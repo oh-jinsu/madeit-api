@@ -38,6 +38,8 @@ describe("Try to create a participant", () => {
 
   const participantRepository = new MockParticipantRepository();
 
+  participantRepository.findOne.mockResolvedValue(new None());
+
   participantRepository.create.mockResolvedValue({
     id: "an id",
     userId: "an user id",
@@ -101,6 +103,30 @@ describe("Try to create a participant", () => {
     }
 
     expect(result.code).toBe(2);
+  });
+
+  it("should fail for an absent room", async () => {
+    participantRepository.findOne.mockResolvedValueOnce(
+      new Some({
+        id: "an id",
+        userId: "an user id",
+        roomId: "a room id",
+        joinedAt: new Date(),
+      }),
+    );
+
+    const params = {
+      accessToken: "an access token",
+      roomId: "a room id",
+    };
+
+    const result = await usecase.execute(params);
+
+    if (!result.isException()) {
+      fail();
+    }
+
+    expect(result.code).toBe(3);
   });
 
   it("should be ok", async () => {

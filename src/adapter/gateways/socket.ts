@@ -1,8 +1,5 @@
 import {
-  ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
@@ -10,9 +7,9 @@ import { Server, Socket } from "socket.io";
 import { VerifyAuthUseCase } from "src/domain/usecases/auth/verify/usecase";
 
 @WebSocketGateway()
-export class WebSocketController implements OnGatewayConnection {
+export class SocketGateway implements OnGatewayConnection {
   @WebSocketServer()
-  server: Server;
+  readonly server: Server;
 
   constructor(private readonly verifyAuthUseCase: VerifyAuthUseCase) {}
 
@@ -31,10 +28,5 @@ export class WebSocketController implements OnGatewayConnection {
     if (!result.isOk()) {
       return client.disconnect();
     }
-  }
-
-  @SubscribeMessage("echo")
-  async receive(@MessageBody() data: any, @ConnectedSocket() socket: Socket) {
-    socket.emit("echo", data);
   }
 }
