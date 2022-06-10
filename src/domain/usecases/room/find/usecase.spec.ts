@@ -1,6 +1,6 @@
 import { MockParticipantRepository } from "src/infrastructure/repositories/participant/mock";
 import { MockRoomRepository } from "src/infrastructure/repositories/room/mock";
-import { FindRoomsUseCase } from "./find";
+import { FindRoomsUseCase } from "./usecase";
 
 describe("Try to find rooms", () => {
   const roomRepository = new MockRoomRepository();

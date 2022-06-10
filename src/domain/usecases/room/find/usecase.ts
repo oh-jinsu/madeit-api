@@ -15,7 +15,7 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
     private readonly participantRepository: ParticipantRepository,
   ) {}
 
-  async execute(): Promise<UseCaseResult<ListOf<RoomResult, string>>> {
+  async execute(): Promise<UseCaseResult<ListOf<RoomResult>>> {
     const { next, items: rooms } = await this.roomRepository.find();
 
     const items = await Promise.all(
