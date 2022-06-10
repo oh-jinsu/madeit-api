@@ -1,6 +1,7 @@
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
 import { VerifyAuthUseCase } from "./usecase";
-describe("Try to sign up with google", () => {
+
+describe("Try to verify the authorization", () => {
   const authProvider = new MockAuthProvider();
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
