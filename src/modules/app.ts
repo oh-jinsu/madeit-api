@@ -2,19 +2,19 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
-import { AuthModule } from "./auth";
+import { ControllerModule } from "./controller";
 import { ProviderModule } from "./provider";
 import { RepositoryModule } from "./repository";
-import { UserModule } from "./user";
+import { UseCaseModule } from "./usecase";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ThrottlerModule.forRoot(),
     ProviderModule,
+    UseCaseModule,
     RepositoryModule,
-    AuthModule,
-    UserModule,
+    ControllerModule,
   ],
   providers: [
     {

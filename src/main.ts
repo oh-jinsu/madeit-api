@@ -1,5 +1,6 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
+import { IoAdapter } from "@nestjs/platform-socket.io";
 import { ErrorFilter } from "./adapter/filters/error";
 import { ErrorFilterForDev } from "./adapter/filters/error_dev";
 import { HttpExceptionFilter } from "./adapter/filters/http";
@@ -24,6 +25,8 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix(process.env.VERSION);
+
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   await app.listen(process.env.PORT);
 }
