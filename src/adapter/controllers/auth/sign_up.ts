@@ -11,7 +11,6 @@ import {
   AbstractController,
   ExceptionResponse,
 } from "src/adapter/common/adapter";
-import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { SignUpWithAppleUseCase } from "src/domain/usecases/auth/sign_up_with_apple/usecase";
 import { SignUpWithGoogleUseCase } from "src/domain/usecases/auth/sign_up_with_google/usecase";
 
@@ -32,16 +31,15 @@ export class SignUpController extends AbstractController {
 
   @Post()
   async receive(
-    @BearerToken() accessToken: string,
     @Query("provider") provider: string,
     @Body() { id_token: idToken }: RequestBody,
   ) {
     const result = await (() => {
       switch (provider) {
         case "apple":
-          return this.usecaseWithApple.execute({ accessToken, idToken });
+          return this.usecaseWithApple.execute({ idToken });
         case "google":
-          return this.usecaseWithGoogle.execute({ accessToken, idToken });
+          return this.usecaseWithGoogle.execute({ idToken });
         default:
           throw new BadRequestException();
       }
