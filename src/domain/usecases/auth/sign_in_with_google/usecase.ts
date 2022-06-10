@@ -12,7 +12,7 @@ import { AuthRepository } from "src/domain/repositories/auth";
 import { AuthCrendentialResult } from "src/domain/results/auth/crendential";
 
 export type Params = {
-  idToken: string;
+  readonly idToken: string;
 };
 
 @Injectable()

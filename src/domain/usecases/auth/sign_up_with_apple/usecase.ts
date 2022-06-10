@@ -14,8 +14,8 @@ import { UserRepository } from "src/domain/repositories/user";
 import { AuthCrendentialResult } from "src/domain/results/auth/crendential";
 
 export type Params = {
-  accessToken: string;
-  idToken: string;
+  readonly accessToken: string;
+  readonly idToken: string;
 };
 
 @Injectable()

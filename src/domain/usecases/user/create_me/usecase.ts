@@ -12,10 +12,10 @@ import { UserRepository } from "src/domain/repositories/user";
 import { UserResult } from "src/domain/results/user";
 
 export type Params = {
-  accessToken: string;
-  email?: string;
-  name: string;
-  avatarId?: string;
+  readonly accessToken: string;
+  readonly email?: string;
+  readonly name: string;
+  readonly avatarId?: string;
 };
 
 @Injectable()

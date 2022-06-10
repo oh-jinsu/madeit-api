@@ -6,14 +6,14 @@ import { AuthProvider } from "src/domain/providers/auth";
 import { ImageRepository } from "src/domain/repositories/image";
 
 export type Params = {
-  accessToken: string;
-  buffer: Buffer;
-  mimetype: string;
+  readonly accessToken: string;
+  readonly buffer: Buffer;
+  readonly mimetype: string;
 };
 
 export type Result = {
-  id: string;
-  createdAt: Date;
+  readonly id: string;
+  readonly createdAt: Date;
 };
 
 @Injectable()

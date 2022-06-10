@@ -1,8 +1,8 @@
 export type RemovePropertyParam = {
-  op: "remove";
+  readonly op: "remove";
 };
 
 export type ReplacePropertyParam<T> = {
-  op: "replace";
-  value: T;
+  readonly op: "replace";
+  readonly value: T;
 };

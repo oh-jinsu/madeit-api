@@ -9,7 +9,7 @@ import { AuthProvider } from "src/domain/providers/auth";
 import { NothingResult } from "src/domain/results/common/nothing";
 
 export type Params = {
-  accessToken: string;
+  readonly accessToken: string;
 };
 
 @Injectable()

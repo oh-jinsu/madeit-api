@@ -11,7 +11,7 @@ import { UserRepository } from "src/domain/repositories/user";
 import { UserResult } from "src/domain/results/user";
 
 export type Params = {
-  accessToken: string;
+  readonly accessToken: string;
 };
 
 @Injectable()

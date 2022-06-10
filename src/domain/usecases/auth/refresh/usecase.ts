@@ -10,11 +10,11 @@ import { HashProvider } from "src/domain/providers/hash";
 import { AuthRepository } from "src/domain/repositories/auth";
 
 export type Params = {
-  refreshToken: string;
+  readonly refreshToken: string;
 };
 
 export type Result = {
-  accessToken: string;
+  readonly accessToken: string;
 };
 
 @Injectable()

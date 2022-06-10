@@ -15,22 +15,22 @@ import { UserRepository } from "src/domain/repositories/user";
 import { UserResult } from "src/domain/results/user";
 
 export type UpdateNameDto = {
-  path: "/name";
+  readonly path: "/name";
 } & ReplacePropertyParam<string>;
 
 export type UpdateEmailDto = {
-  path: "/email";
+  readonly path: "/email";
 } & (ReplacePropertyParam<string> | RemovePropertyParam);
 
 export type UpdateAvatarDto = {
-  path: "/avatar_id";
+  readonly path: "/avatar_id";
 } & (ReplacePropertyParam<string> | RemovePropertyParam);
 
 export type UpdateMeDto = UpdateNameDto | UpdateEmailDto | UpdateAvatarDto;
 
 export type Params = {
-  accessToken: string;
-  dtos: UpdateMeDto[];
+  readonly accessToken: string;
+  readonly dtos: UpdateMeDto[];
 };
 
 @Injectable()
