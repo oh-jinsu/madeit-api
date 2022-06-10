@@ -40,7 +40,7 @@ export class CreateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
 
     const nameLength = ~-encodeURI(name).split(/%..|./).length;
 
-    if (nameLength < 2) {
+    if (nameLength < 6) {
       return new UseCaseException(2);
     }
 
@@ -48,10 +48,12 @@ export class CreateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
       return new UseCaseException(3);
     }
 
-    const avatarOption = await this.imageRepository.findOne(avatarId);
+    if (avatarId) {
+      const avatarOption = await this.imageRepository.findOne(avatarId);
 
-    if (!avatarOption.isSome()) {
-      return new UseCaseException(4);
+      if (!avatarOption.isSome()) {
+        return new UseCaseException(4);
+      }
     }
 
     const { updatedAt, createdAt } = await this.userRepository.save({
