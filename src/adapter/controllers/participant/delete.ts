@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Delete, HttpCode } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { IsString } from "class-validator";
 import {
@@ -24,7 +24,8 @@ export class DeleteParticipantController extends AbstractController {
     super();
   }
 
-  @Post()
+  @Delete()
+  @HttpCode(204)
   async receive(
     @BearerToken() accessToken: string,
     @Body() { room_id: roomId }: RequestBody,
