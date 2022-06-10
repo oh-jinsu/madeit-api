@@ -42,7 +42,7 @@ export class RoomRepositoryImpl implements RoomRepository {
       order: {
         createdAt: "DESC",
       },
-      take: limit ? limit + 1 : null,
+      take: limit ? limit + (cursored ? 0 : 1) : null,
     });
 
     if (cursored) {
