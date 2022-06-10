@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { AbstractController } from "src/adapter/common/adapter";
 import { FindRoomsUseCase } from "src/domain/usecases/room/find/usecase";
@@ -11,8 +11,14 @@ export class FindRoomsController extends AbstractController {
   }
 
   @Get()
-  async receive() {
-    const result = await this.usecase.execute();
+  async receive(
+    @Query("cursor") cursor: string,
+    @Query("limit") limit: string,
+  ) {
+    const result = await this.usecase.execute({
+      cursor,
+      limit: Number(limit),
+    });
 
     return this.response(result);
   }

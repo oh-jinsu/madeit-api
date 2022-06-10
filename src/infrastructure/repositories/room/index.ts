@@ -27,11 +27,13 @@ export class RoomRepositoryImpl implements RoomRepository {
   }
 
   async find(cursor?: string, limit?: number): Promise<ListOf<RoomModel>> {
-    const cursored = await this.adaptee.findOne({
-      where: {
-        id: cursor,
-      },
-    });
+    const cursored = cursor
+      ? await this.adaptee.findOne({
+          where: {
+            id: cursor,
+          },
+        })
+      : null;
 
     const query = await this.adaptee.find({
       where: {

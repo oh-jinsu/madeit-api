@@ -19,7 +19,6 @@ export class GoogleAuthProviderImpl implements GoogleAuthProvider {
 
       return true;
     } catch (e) {
-      console.log(e);
       return false;
     }
   }

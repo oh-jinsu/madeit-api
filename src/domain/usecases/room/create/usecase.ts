@@ -31,8 +31,7 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomResult> {
     { title }: Params,
   ): Promise<UseCaseResult<RoomResult>> {
     const titleLength = ~-encodeURI(title).split(/%..|./).length;
-    console.log(title);
-    console.log(titleLength);
+
     if (titleLength < 6) {
       return new UseCaseException(1);
     }

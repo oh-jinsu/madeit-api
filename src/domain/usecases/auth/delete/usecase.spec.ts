@@ -32,7 +32,6 @@ describe("Try to delete the auth", () => {
     const result = await usecase.execute({ accessToken: "an access token" });
 
     if (!result.isOk()) {
-      console.log(result);
       fail();
     }
 

@@ -6,7 +6,10 @@ import { UseCaseOk, UseCaseResult } from "src/domain/common/usecase_result";
 import { ParticipantRepository } from "src/domain/repositories/participant";
 import { RoomRepository } from "src/domain/repositories/room";
 
-export type Params = Record<string, never>;
+export type Params = {
+  cursor?: string;
+  limit?: number;
+};
 
 @Injectable()
 export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
@@ -15,8 +18,14 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
     private readonly participantRepository: ParticipantRepository,
   ) {}
 
-  async execute(): Promise<UseCaseResult<ListOf<RoomResult>>> {
-    const { next, items: rooms } = await this.roomRepository.find();
+  async execute({
+    cursor,
+    limit,
+  }: Params): Promise<UseCaseResult<ListOf<RoomResult>>> {
+    const { next, items: rooms } = await this.roomRepository.find(
+      cursor,
+      limit,
+    );
 
     const items = await Promise.all(
       rooms.map(async ({ id, title, createdAt }) => {
