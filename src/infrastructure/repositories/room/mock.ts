@@ -1,5 +1,5 @@
 import { Option } from "src/domain/common/enum";
-import { ListOf } from "src/domain/models/list_of";
+import { ListOf } from "src/domain/common/types";
 import { RoomModel } from "src/domain/models/room";
 import { RoomRepository } from "src/domain/repositories/room";
 

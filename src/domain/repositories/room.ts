@@ -1,5 +1,5 @@
 import { Option } from "../common/enum";
-import { ListOf } from "../models/list_of";
+import { ListOf } from "../common/types";
 import { RoomModel } from "../models/room";
 
 export abstract class RoomRepository {

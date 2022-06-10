@@ -6,6 +6,7 @@ import { SignInController } from "src/adapter/controllers/auth/sign_in";
 import { SignOutController } from "src/adapter/controllers/auth/sign_out";
 import { SignUpController } from "src/adapter/controllers/auth/sign_up";
 import { UploadImageController } from "src/adapter/controllers/image/upload";
+import { FindRoomsController } from "src/adapter/controllers/room/find";
 import { CreateGuestController } from "src/adapter/controllers/user/create_guest";
 import { CreateMeController } from "src/adapter/controllers/user/create_me";
 import { FindMeController } from "src/adapter/controllers/user/find_me";
@@ -27,6 +28,8 @@ import { WebSocketController } from "src/adapter/controllers/websocket";
     FindMeController,
     UpdateMeController,
     // User Module
+    FindRoomsController,
+    // Room Module
     UploadImageController,
     // Image Module
   ],

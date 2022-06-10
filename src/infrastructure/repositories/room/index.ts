@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { None, Option, Some } from "src/domain/common/enum";
-import { ListOf } from "src/domain/models/list_of";
+import { ListOf } from "src/domain/common/types";
 import { RoomModel } from "src/domain/models/room";
 import { RoomRepository } from "src/domain/repositories/room";
 import { LessThan, Repository } from "typeorm";
