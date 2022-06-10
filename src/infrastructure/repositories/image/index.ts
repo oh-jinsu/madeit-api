@@ -8,13 +8,14 @@ import * as sharp from "sharp";
 import { None, Option, Some } from "src/domain/common/enum";
 import { ImageModel } from "src/domain/models/image";
 import { ImageRepository, SaveImageDto } from "src/domain/repositories/image";
-import s3 from "src/infrastructure/sources/s3";
+import { RemoteFileStorage } from "src/infrastructure/sources/remote_file_storage";
 
 @Injectable()
 export class ImageRepositoryImpl implements ImageRepository {
   constructor(
     @InjectRepository(ImageEntity)
     private readonly adaptee: Repository<ImageEntity>,
+    private readonly storage: RemoteFileStorage,
   ) {}
 
   async findOne(id: string): Promise<Option<ImageModel>> {
@@ -32,7 +33,7 @@ export class ImageRepositoryImpl implements ImageRepository {
 
     const newone = this.adaptee.create({ id, userId });
 
-    s3.upload(`${id}`, buffer, mimetype);
+    this.storage.upload(`${id}`, buffer, mimetype);
 
     const [mdpi, xhdpi, xxhdpi] = await Promise.all([
       sharp(buffer).resize(375).withMetadata().toBuffer(),
@@ -41,9 +42,9 @@ export class ImageRepositoryImpl implements ImageRepository {
     ]);
 
     await Promise.all([
-      s3.upload(`${id}/mdpi`, mdpi, mimetype),
-      s3.upload(`${id}/xhdpi`, xhdpi, mimetype),
-      s3.upload(`${id}/xxhdpi`, xxhdpi, mimetype),
+      this.storage.upload(`${id}/mdpi`, mdpi, mimetype),
+      this.storage.upload(`${id}/xhdpi`, xhdpi, mimetype),
+      this.storage.upload(`${id}/xxhdpi`, xxhdpi, mimetype),
     ]);
 
     const entity = await this.adaptee.save(newone);
@@ -52,6 +53,6 @@ export class ImageRepositoryImpl implements ImageRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await Promise.all([this.adaptee.delete(id), s3.remove(id)]);
+    await Promise.all([this.adaptee.delete(id), this.storage.remove(id)]);
   }
 }
