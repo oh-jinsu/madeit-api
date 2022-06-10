@@ -6,7 +6,7 @@ export class UserMapper {
     id,
     name,
     email,
-    avatar,
+    avatarId,
     updatedAt,
     createdAt,
   }: UserEntity): UserModel {
@@ -14,7 +14,7 @@ export class UserMapper {
       id,
       name,
       email,
-      avatar,
+      avatarId,
       updatedAt,
       createdAt,
     };

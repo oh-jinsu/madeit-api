@@ -5,7 +5,7 @@ export type SaveUserDto = {
   id: string;
   name: string;
   email?: string;
-  avatar?: string;
+  avatarId?: string;
 };
 
 export type UpdateUserDto = Partial<

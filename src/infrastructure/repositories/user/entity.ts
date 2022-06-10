@@ -22,7 +22,7 @@ export class UserEntity {
   @Column({
     nullable: true,
   })
-  avatar?: string;
+  avatarId?: string;
 
   @UpdateDateColumn()
   updatedAt: Date;

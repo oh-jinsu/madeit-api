@@ -32,12 +32,12 @@ export class UserRepositoryImpl implements UserRepository {
     return new Some(result);
   }
 
-  async save({ id, name, email, avatar }: SaveUserDto): Promise<UserModel> {
+  async save({ id, name, email, avatarId }: SaveUserDto): Promise<UserModel> {
     const newone = this.adaptee.create({
       id,
       name,
       email,
-      avatar,
+      avatarId,
     });
 
     const entity = await this.adaptee.save(newone);

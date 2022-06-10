@@ -1,0 +1,17 @@
+import { Option } from "../common/enum";
+import { ImageModel } from "../models/image";
+
+export type SaveImageDto = {
+  userId: string;
+  preffix: string;
+  buffer: Buffer;
+  mimetype: string;
+};
+
+export abstract class ImageRepository {
+  abstract findOne(id: string): Promise<Option<ImageModel>>;
+
+  abstract save(dto: SaveImageDto): Promise<ImageModel>;
+
+  abstract delete(id: string): Promise<void>;
+}
