@@ -1,6 +1,6 @@
-export type Participant = {
+export type ParticipantModel = {
   readonly id: string;
   readonly userId: string;
-  readonly roomid: string;
-  readonly createdAt: string;
+  readonly roomId: string;
+  readonly joinedAt: Date;
 };
