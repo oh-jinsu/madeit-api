@@ -3,7 +3,6 @@ import { MockAppleAuthProvider } from "src/infrastructure/providers/apple_auth/m
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
 import { MockHashProvider } from "src/infrastructure/providers/hash/mock";
 import { MockAuthRepository } from "src/infrastructure/repositories/auth/mock";
-import { MockUserRepository } from "src/infrastructure/repositories/user/mock";
 import { SignUpWithAppleUseCase } from "./usecase";
 
 describe("Try to sign up with apple", () => {
@@ -58,46 +57,19 @@ describe("Try to sign up with apple", () => {
 
   hashProvider.encode.mockResolvedValue("a hashed value");
 
-  const userRepository = new MockUserRepository();
-
-  userRepository.delete.mockResolvedValue(null);
-
   const usecase = new SignUpWithAppleUseCase(
     authProvider,
     appleAuthProvider,
     hashProvider,
     authRepository,
-    userRepository,
   );
-
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
-  it("should fail for a invalid id token", async () => {
-    appleAuthProvider.verify.mockResolvedValueOnce(false);
-
-    const accessToken = "an access token";
-
-    const idToken = "an id token";
-
-    const result = await usecase.execute({ accessToken, idToken });
-
-    if (!result.isException()) {
-      fail();
-    }
-
-    expect(result.code).toBe(1);
-  });
 
   it("should fail for a existing user", async () => {
     authRepository.findOneByKey.mockResolvedValueOnce(new Some(null));
 
-    const accessToken = "an access token";
-
     const idToken = "an id token";
 
-    const result = await usecase.execute({ accessToken, idToken });
+    const result = await usecase.execute({ idToken });
 
     if (!result.isException()) {
       fail();
@@ -107,11 +79,9 @@ describe("Try to sign up with apple", () => {
   });
 
   it("should be ok", async () => {
-    const accessToken = "an access token";
-
     const idToken = "an id token";
 
-    const result = await usecase.execute({ accessToken, idToken });
+    const result = await usecase.execute({ idToken });
 
     if (!result.isOk()) {
       fail();

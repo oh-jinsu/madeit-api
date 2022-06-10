@@ -21,7 +21,7 @@ describe("Try to find rooms", () => {
   const usecase = new FindRoomsUseCase(roomRepository, participantRepository);
 
   it("should be ok", async () => {
-    const result = await usecase.execute();
+    const result = await usecase.execute({});
 
     if (!result.isOk()) {
       fail();
