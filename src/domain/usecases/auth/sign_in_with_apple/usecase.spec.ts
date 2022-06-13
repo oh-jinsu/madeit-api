@@ -59,10 +59,6 @@ describe("test the sign in with google usecase", () => {
     authRepository,
   );
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid id token", async () => {
     appleAuthProvider.verify.mockResolvedValueOnce(false);
 

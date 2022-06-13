@@ -26,10 +26,6 @@ describe("Try to find me", () => {
 
   const usecase = new FindMeUseCase(authProvider, userRepository);
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid access token", async () => {
     authProvider.verifyAccessToken.mockResolvedValueOnce(false);
 

@@ -37,10 +37,6 @@ describe("Try to update me", () => {
 
   const usecase = new UpdateMeUseCase(authProvider, userRepository);
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid access token", async () => {
     authProvider.verifyAccessToken.mockResolvedValueOnce(false);
 

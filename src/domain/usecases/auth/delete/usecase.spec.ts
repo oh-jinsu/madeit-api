@@ -24,10 +24,6 @@ describe("Try to delete the auth", () => {
     userRepository,
   );
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should be ok", async () => {
     const result = await usecase.execute({ accessToken: "an access token" });
 

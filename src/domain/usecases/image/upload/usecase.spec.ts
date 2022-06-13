@@ -21,10 +21,6 @@ describe("test the upload image usecase", () => {
 
   const usecase = new UploadImageUseCase(authProvider, imageRepository);
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid access token", async () => {
     authProvider.verifyAccessToken.mockResolvedValueOnce(false);
 

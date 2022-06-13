@@ -43,10 +43,6 @@ describe("Try to create me", () => {
     imageRepository,
   );
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid access token", async () => {
     authProvider.verifyAccessToken.mockResolvedValueOnce(false);
 

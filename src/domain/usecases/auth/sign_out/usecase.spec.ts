@@ -39,10 +39,6 @@ describe("test a sign out usecase", () => {
 
   const usecase = new SignOutUseCase(authProvider, authRepository);
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid token", async () => {
     authProvider.verifyAccessToken.mockResolvedValueOnce(false);
 

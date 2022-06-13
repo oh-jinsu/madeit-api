@@ -36,10 +36,6 @@ describe("test the refresh auth usecase", () => {
     authRepository,
   );
 
-  it("should be defined", () => {
-    expect(usecase).toBeDefined();
-  });
-
   it("should fail for an invalid refresh token", async () => {
     authProvider.verifyRefreshToken.mockResolvedValueOnce(false);
 
