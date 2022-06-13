@@ -6,6 +6,8 @@ describe("Try to verify the authorization", () => {
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
+  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+
   const usecase = new VerifyAuthUseCase(authProvider);
 
   it("should be ok", async () => {

@@ -1,17 +1,26 @@
 import {
   OnGatewayConnection,
+  OnGatewayDisconnect,
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { VerifyAuthUseCase } from "src/domain/usecases/auth/verify/usecase";
+import { FindMyRoomsUsecase } from "src/domain/usecases/room/find_mine/usecase";
 
 @WebSocketGateway()
-export class SocketGateway implements OnGatewayConnection {
+export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  readonly server: Server;
+  private readonly server: Server;
 
-  constructor(private readonly verifyAuthUseCase: VerifyAuthUseCase) {}
+  private readonly sockets: Record<string, Socket>;
+
+  constructor(
+    private readonly verifyAuthUseCase: VerifyAuthUseCase,
+    private readonly findMyRoomsUseCase: FindMyRoomsUsecase,
+  ) {
+    this.sockets = {};
+  }
 
   async handleConnection(client: Socket) {
     const accessToken = client.handshake.url
@@ -23,10 +32,32 @@ export class SocketGateway implements OnGatewayConnection {
       return client.disconnect();
     }
 
-    const result = await this.verifyAuthUseCase.execute({ accessToken });
+    const authorization = await this.verifyAuthUseCase.execute({ accessToken });
 
-    if (!result.isOk()) {
+    if (!authorization.isOk()) {
       return client.disconnect();
     }
+
+    this.sockets[authorization.value.id] = client;
+
+    const rooms = await this.findMyRoomsUseCase.execute({ accessToken });
+
+    if (!rooms.isOk()) {
+      return client.disconnect();
+    }
+
+    await client.join(rooms.value.map(({ id }) => id));
+  }
+
+  handleDisconnect(client: Socket) {
+    const key = Object.keys(this.sockets).find(
+      (socket) => this.sockets[socket] === client,
+    );
+
+    delete this.sockets[key];
+  }
+
+  getSocket(id: string): Socket {
+    return this.sockets[id];
   }
 }

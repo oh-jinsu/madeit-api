@@ -19,7 +19,7 @@ export class RequestBody {
 export class DeleteParticipantController extends AbstractController {
   constructor(
     private readonly usecase: DeleteParticipantUseCase,
-    private readonly socket: SocketGateway,
+    private readonly socketGateway: SocketGateway,
   ) {
     super();
   }
@@ -34,6 +34,10 @@ export class DeleteParticipantController extends AbstractController {
       accessToken,
       roomId,
     });
+
+    if (result.isOk()) {
+      await this.socketGateway.getSocket(result.value.userId).leave(roomId);
+    }
 
     return this.response(result);
   }

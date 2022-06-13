@@ -6,25 +6,28 @@ import {
   UseCaseResult,
 } from "src/domain/common/usecase_result";
 import { AuthProvider } from "src/domain/providers/auth";
-import { NothingResult } from "src/domain/results/common/nothing";
 
 export type Params = {
   readonly accessToken: string;
 };
 
+export type Result = {
+  readonly id: string;
+};
+
 @Injectable()
-export class VerifyAuthUseCase implements UseCase<Params, NothingResult> {
+export class VerifyAuthUseCase implements UseCase<Params, Result> {
   constructor(private readonly authProvider: AuthProvider) {}
 
-  async execute({
-    accessToken,
-  }: Params): Promise<UseCaseResult<NothingResult>> {
+  async execute({ accessToken }: Params): Promise<UseCaseResult<Result>> {
     const isVerified = await this.authProvider.verifyAccessToken(accessToken);
 
     if (!isVerified) {
       return new UseCaseException(1);
     }
 
-    return new UseCaseOk(null);
+    const { id } = await this.authProvider.extractClaim(accessToken);
+
+    return new UseCaseOk({ id });
   }
 }

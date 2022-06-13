@@ -8,17 +8,20 @@ import {
 import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
 import { ParticipantRepository } from "src/domain/repositories/participant";
-import { NothingResult } from "src/domain/results/common/nothing";
 
 export type Params = {
   readonly accessToken: string;
   readonly roomId: string;
 };
 
+export type Result = {
+  readonly userId: string;
+};
+
 @Injectable()
 export class DeleteParticipantUseCase extends AuthorizedUseCase<
   Params,
-  NothingResult
+  Result
 > {
   constructor(
     authProvider: AuthProvider,
@@ -30,7 +33,7 @@ export class DeleteParticipantUseCase extends AuthorizedUseCase<
   protected async executeWithAuth(
     { id: userId }: ClaimModel,
     { roomId }: Params,
-  ): Promise<UseCaseResult<NothingResult>> {
+  ): Promise<UseCaseResult<Result>> {
     const participantOption = await this.participantRepository.findOne(
       userId,
       roomId,
@@ -42,6 +45,8 @@ export class DeleteParticipantUseCase extends AuthorizedUseCase<
 
     await this.participantRepository.delete(participantOption.value.id);
 
-    return new UseCaseOk(null);
+    return new UseCaseOk({
+      userId,
+    });
   }
 }

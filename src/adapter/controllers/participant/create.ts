@@ -19,7 +19,7 @@ export class RequestBody {
 export class CreateParticipantController extends AbstractController {
   constructor(
     private readonly usecase: CreateParticipantUseCase,
-    private readonly socket: SocketGateway,
+    private readonly socketGateway: SocketGateway,
   ) {
     super();
   }
@@ -33,6 +33,12 @@ export class CreateParticipantController extends AbstractController {
       accessToken,
       roomId,
     });
+
+    if (result.isOk()) {
+      await this.socketGateway
+        .getSocket(result.value.user.id)
+        .join(result.value.room.id);
+    }
 
     return this.response(result);
   }
