@@ -9,6 +9,7 @@ import { CreateParticipantController } from "src/adapter/controllers/participant
 import { DeleteParticipantController } from "src/adapter/controllers/participant/delete";
 import { CreateRoomController } from "src/adapter/controllers/room/create";
 import { FindRoomsController } from "src/adapter/controllers/room/find";
+import { FindMyRoomsController } from "src/adapter/controllers/room/find_mine";
 import { CreateMeController } from "src/adapter/controllers/user/create_me";
 import { FindMeController } from "src/adapter/controllers/user/find_me";
 import { UpdateMeController } from "src/adapter/controllers/user/update";
@@ -28,6 +29,7 @@ import { SocketGateway } from "src/adapter/gateways/socket";
     UpdateMeController,
     // User Module
     FindRoomsController,
+    FindMyRoomsController,
     CreateRoomController,
     // Room Module
     CreateParticipantController,

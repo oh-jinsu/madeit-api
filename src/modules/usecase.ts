@@ -12,6 +12,7 @@ import { CreateParticipantUseCase } from "src/domain/usecases/participant/create
 import { DeleteParticipantUseCase } from "src/domain/usecases/participant/delete/usecase";
 import { CreateRoomUseCase } from "src/domain/usecases/room/create/usecase";
 import { FindRoomsUseCase } from "src/domain/usecases/room/find/usecase";
+import { FindMyRoomsUsecase } from "src/domain/usecases/room/find_mine/usecase";
 import { CreateMeUseCase } from "src/domain/usecases/user/create_me/usecase";
 import { FindMeUseCase } from "src/domain/usecases/user/find_me/usecase";
 import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
@@ -33,6 +34,7 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     UpdateMeUseCase,
     // User Module
     FindRoomsUseCase,
+    FindMyRoomsUsecase,
     CreateRoomUseCase,
     // Room Module
     CreateParticipantUseCase,
@@ -56,6 +58,7 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     UpdateMeUseCase,
     // User Module
     FindRoomsUseCase,
+    FindMyRoomsUsecase,
     CreateRoomUseCase,
     // Room Module
     CreateParticipantUseCase,
