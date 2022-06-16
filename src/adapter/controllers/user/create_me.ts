@@ -18,7 +18,7 @@ export class RequestBody {
 
   @IsString()
   @IsOptional()
-  avatar?: string;
+  avatar_id?: string;
 }
 
 @Throttle(1, 0.1)
@@ -31,13 +31,13 @@ export class CreateMeController extends AbstractController {
   @Post("me")
   async receive(
     @BearerToken() accessToken: string,
-    @Body() { name, email, avatar }: RequestBody,
+    @Body() { name, email, avatar_id: avatarId }: RequestBody,
   ) {
     const result = await this.usecase.execute({
       accessToken,
       name,
       email,
-      avatarId: avatar,
+      avatarId,
     });
 
     return this.response(result);
