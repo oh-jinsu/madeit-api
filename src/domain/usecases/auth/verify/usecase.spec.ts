@@ -19,6 +19,6 @@ describe("Try to verify the authorization", () => {
       fail();
     }
 
-    expect(result.value).toBeNull();
+    expect(result.value.id).toBeDefined();
   });
 });

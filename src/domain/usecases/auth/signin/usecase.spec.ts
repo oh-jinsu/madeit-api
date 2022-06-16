@@ -1,9 +1,11 @@
 import { None, Some } from "src/domain/common/enum";
+import { MockAppleAuthProvider } from "src/infrastructure/providers/apple_auth/mock";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
 import { MockGoogleAuthProvider } from "src/infrastructure/providers/google_auth/mock";
 import { MockHashProvider } from "src/infrastructure/providers/hash/mock";
+import { MockKakaoAuthProvider } from "src/infrastructure/providers/kakao_auth/mock";
 import { MockAuthRepository } from "src/infrastructure/repositories/auth/mock";
-import { SignInWithGoogleUseCase } from "./usecase";
+import { SignInUseCase } from "./usecase";
 
 describe("test the sign in with google usecase", () => {
   const authProvider = new MockAuthProvider();
@@ -12,11 +14,29 @@ describe("test the sign in with google usecase", () => {
 
   authProvider.issueRefreshToken.mockResolvedValue("new refresh token");
 
-  const googleAuthProvider = new MockGoogleAuthProvider();
+  const appleAuthProvider = new MockAppleAuthProvider();
 
-  googleAuthProvider.verify.mockResolvedValue(true);
+  appleAuthProvider.verify.mockResolvedValue(true);
 
-  googleAuthProvider.extractClaim.mockResolvedValue({
+  appleAuthProvider.extractClaim.mockResolvedValue({
+    id: "an id",
+    email: "an email",
+  });
+
+  const googleAuthPRovider = new MockGoogleAuthProvider();
+
+  googleAuthPRovider.verify.mockResolvedValue(true);
+
+  googleAuthPRovider.extractClaim.mockResolvedValue({
+    id: "an id",
+    email: "an email",
+  });
+
+  const kakaoAuthProvider = new MockKakaoAuthProvider();
+
+  kakaoAuthProvider.verify.mockResolvedValue(true);
+
+  kakaoAuthProvider.extractClaim.mockResolvedValue({
     id: "an id",
     email: "an email",
   });
@@ -52,19 +72,55 @@ describe("test the sign in with google usecase", () => {
     }),
   );
 
-  const usecase = new SignInWithGoogleUseCase(
+  const usecase = new SignInUseCase(
     authProvider,
-    googleAuthProvider,
+    appleAuthProvider,
+    googleAuthPRovider,
+    kakaoAuthProvider,
     hashProvider,
     authRepository,
   );
 
-  it("should fail for an invalid id token", async () => {
-    googleAuthProvider.verify.mockResolvedValueOnce(false);
+  it("should fail for an invalid id token from apple", async () => {
+    appleAuthProvider.verify.mockResolvedValueOnce(false);
+
+    const provider = "apple";
 
     const idToken = "an id token";
 
-    const result = await usecase.execute({ idToken });
+    const result = await usecase.execute({ provider, idToken });
+
+    if (!result.isException()) {
+      fail();
+    }
+
+    expect(result.code).toBe(1);
+  });
+
+  it("should fail for an invalid id token from google", async () => {
+    googleAuthPRovider.verify.mockResolvedValueOnce(false);
+
+    const provider = "google";
+
+    const idToken = "an id token";
+
+    const result = await usecase.execute({ provider, idToken });
+
+    if (!result.isException()) {
+      fail();
+    }
+
+    expect(result.code).toBe(1);
+  });
+
+  it("should fail for an invalid id token from kakao", async () => {
+    kakaoAuthProvider.verify.mockResolvedValueOnce(false);
+
+    const provider = "kakao";
+
+    const idToken = "an id token";
+
+    const result = await usecase.execute({ provider, idToken });
 
     if (!result.isException()) {
       fail();
@@ -76,9 +132,11 @@ describe("test the sign in with google usecase", () => {
   it("should fail for an absent user", async () => {
     authRepository.findOneByKey.mockResolvedValueOnce(new None());
 
+    const provider = "apple";
+
     const idToken = "an id token";
 
-    const result = await usecase.execute({ idToken });
+    const result = await usecase.execute({ provider, idToken });
 
     if (!result.isException()) {
       fail();
@@ -87,10 +145,12 @@ describe("test the sign in with google usecase", () => {
     expect(result.code).toBe(2);
   });
 
-  it("should return an access token and a refresh token", async () => {
+  it("should be ok", async () => {
+    const provider = "apple";
+
     const idToken = "an id token";
 
-    const result = await usecase.execute({ idToken });
+    const result = await usecase.execute({ provider, idToken });
 
     if (!result.isOk()) {
       fail();

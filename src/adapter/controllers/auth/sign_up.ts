@@ -1,19 +1,11 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Post, Query } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { IsString } from "class-validator";
 import {
   AbstractController,
   ExceptionResponse,
 } from "src/adapter/common/adapter";
-import { SignUpWithAppleUseCase } from "src/domain/usecases/auth/sign_up_with_apple/usecase";
-import { SignUpWithGoogleUseCase } from "src/domain/usecases/auth/sign_up_with_google/usecase";
-
+import { SignUpUseCase } from "src/domain/usecases/auth/signup/usecase";
 export class RequestBody {
   @IsString()
   id_token: string;
@@ -22,28 +14,16 @@ export class RequestBody {
 @Throttle(1, 0.1)
 @Controller("auth/signup")
 export class SignUpController extends AbstractController {
-  constructor(
-    private readonly usecaseWithApple: SignUpWithAppleUseCase,
-    private readonly usecaseWithGoogle: SignUpWithGoogleUseCase,
-  ) {
+  constructor(private readonly usecase: SignUpUseCase) {
     super();
   }
 
   @Post()
   async receive(
-    @Query("provider") provider: string,
+    @Query("provider") provider: "apple" | "google" | "kakao",
     @Body() { id_token: idToken }: RequestBody,
   ) {
-    const result = await (() => {
-      switch (provider) {
-        case "apple":
-          return this.usecaseWithApple.execute({ idToken });
-        case "google":
-          return this.usecaseWithGoogle.execute({ idToken });
-        default:
-          throw new BadRequestException();
-      }
-    })();
+    const result = await this.usecase.execute({ provider, idToken });
 
     return this.response(result);
   }
