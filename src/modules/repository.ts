@@ -1,9 +1,9 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthEntity } from "src/declarations/entities/auth";
-import { GoalEntity } from "src/declarations/entities/goal";
 import { ImageEntity } from "src/declarations/entities/image";
 import { ParticipantEntity } from "src/declarations/entities/participant";
+import { PerformanceEntity } from "src/declarations/entities/performance";
 import { RoomEntity } from "src/declarations/entities/room";
 import { UserEntity } from "src/declarations/entities/user";
 import { FileRepository } from "src/declarations/repositories/file";
@@ -25,8 +25,8 @@ import { FileRepositoryImpl } from "src/implementations/repositories/file";
           UserEntity,
           ImageEntity,
           RoomEntity,
-          GoalEntity,
           ParticipantEntity,
+          PerformanceEntity,
         ],
         synchronize: true,
         dropSchema: Boolean(process.env.DROP_SCHEME),

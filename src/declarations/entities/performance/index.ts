@@ -1,18 +1,18 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
-export class GoalEntity {
+export class PerformanceEntity {
   @PrimaryColumn()
+  id: string;
+
+  @Column()
   roomId: string;
 
   @Column()
-  label: string;
+  userId: string;
 
   @Column()
-  type: "number" | "date" | "duration";
-
-  @Column()
-  symbol: string;
+  value: number;
 
   @CreateDateColumn()
   createdAt: Date;

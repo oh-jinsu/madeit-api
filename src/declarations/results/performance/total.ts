@@ -1,5 +1,5 @@
 export type TotalPerformanceResult = {
   readonly label: string;
-  readonly value: unknown;
+  readonly value: number;
   readonly symbol: string;
 };

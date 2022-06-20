@@ -72,13 +72,23 @@ export class SignUpUseCase implements UseCase<Params, AuthCrendentialResult> {
       return new UseCaseException(1);
     }
 
-    const entity = await this.authRepository.findOne({ where: { key } });
+    const authOption = await this.authRepository.findOne({ where: { key } });
 
-    if (entity) {
+    if (authOption) {
       return new UseCaseException(2);
     }
 
-    const id = this.uuidProvider.v4();
+    const nameLength = ~-encodeURI(name).split(/%..|./).length;
+
+    if (nameLength < 6) {
+      return new UseCaseException(3);
+    }
+
+    if (nameLength > 24) {
+      return new UseCaseException(4);
+    }
+
+    const id = this.uuidProvider.generate();
 
     const newAuth = this.authRepository.create({
       id,
@@ -103,26 +113,6 @@ export class SignUpUseCase implements UseCase<Params, AuthCrendentialResult> {
     await this.authRepository.update(auth.id, {
       refreshToken: hashedRefreshToken,
     });
-
-    const option = await this.userRepository.findOne({
-      where: {
-        id,
-      },
-    });
-
-    if (!option) {
-      return new UseCaseException(3);
-    }
-
-    const nameLength = ~-encodeURI(name).split(/%..|./).length;
-
-    if (nameLength < 6) {
-      return new UseCaseException(4);
-    }
-
-    if (nameLength > 24) {
-      return new UseCaseException(5);
-    }
 
     const newUser = this.userRepository.create({
       id,

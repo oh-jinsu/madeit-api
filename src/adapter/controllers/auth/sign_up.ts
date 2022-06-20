@@ -54,15 +54,10 @@ export class SignUpController extends AbstractController {
         };
       case 3:
         return {
-          status: 409,
-          message: "이미 등록된 이용자입니다.",
-        };
-      case 4:
-        return {
           status: 400,
           message: "이름은 2글자 이상이어야 합니다.",
         };
-      case 5:
+      case 4:
         return {
           status: 400,
           message: "이름은 8글자 이하여야 합니다.",

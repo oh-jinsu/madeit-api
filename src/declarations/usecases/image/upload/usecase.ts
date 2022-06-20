@@ -40,7 +40,7 @@ export class UploadImageUseCase extends AuthorizedUseCase<Params, Result> {
     userId: string,
     { buffer, mimetype }: Params,
   ): Promise<UseCaseResult<Result>> {
-    const id = this.uuidProvider.v4();
+    const id = this.uuidProvider.generate();
 
     const newone = this.imageRepository.create({ id, userId });
 

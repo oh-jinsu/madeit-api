@@ -1,3 +1,3 @@
 export abstract class UuidProvider {
-  abstract v4(): string;
+  abstract generate(): string;
 }

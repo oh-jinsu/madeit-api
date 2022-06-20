@@ -12,7 +12,7 @@ import { SignUpUseCase } from "./usecase";
 describe("Try to sign up", () => {
   const uuidProvider = new MockUuidProvider();
 
-  uuidProvider.v4.mockReturnValue("an uuid");
+  uuidProvider.generate.mockReturnValue("an uuid");
 
   const authProvider = new MockAuthProvider();
 
@@ -64,14 +64,7 @@ describe("Try to sign up", () => {
 
   const userRepository = new MockRepository<UserEntity>();
 
-  userRepository.findOne.mockResolvedValue({
-    id: "an id",
-    name: "a name",
-    email: "an email",
-    avatarId: "an avatar id",
-    updatedAt: new Date(),
-    createdAt: new Date(),
-  });
+  userRepository.findOne.mockResolvedValue(null);
 
   userRepository.save.mockResolvedValue({
     id: "an id",
@@ -147,7 +140,7 @@ describe("Try to sign up", () => {
     expect(result.code).toBe(1);
   });
 
-  it("should fail for a existing user", async () => {
+  it("should fail for a existing account", async () => {
     authRepository.findOne.mockResolvedValueOnce({
       id: "an id",
       key: "a key",

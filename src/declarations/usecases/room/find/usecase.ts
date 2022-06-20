@@ -10,6 +10,8 @@ import { LessThan, Repository } from "typeorm";
 import { RoomEntity } from "src/declarations/entities/room";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserEntity } from "src/declarations/entities/user";
+import { PerformanceEntity } from "src/declarations/entities/performance";
 
 export type Params = {
   cursor?: string;
@@ -21,8 +23,12 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
   constructor(
     @InjectRepository(RoomEntity)
     private readonly roomRepository: Repository<RoomEntity>,
+    @InjectRepository(PerformanceEntity)
+    private readonly performanceRepository: Repository<PerformanceEntity>,
     @InjectRepository(ParticipantEntity)
     private readonly participantRepository: Repository<ParticipantEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async execute({
@@ -37,7 +43,7 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
         })
       : null;
 
-    const query = await this.roomRepository.find({
+    const rooms = await this.roomRepository.find({
       where: {
         createdAt: LessThan(cursored?.createdAt || new Date()),
       },
@@ -48,26 +54,68 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
     });
 
     if (cursored) {
-      query.unshift(cursored);
+      rooms.unshift(cursored);
     }
 
-    const next = limit && query.length === limit + 1 ? query.pop() : null;
+    const next = limit && rooms.length === limit + 1 ? rooms.pop() : null;
 
     const items = await Promise.all(
-      query.map(async ({ id, title, createdAt }) => {
-        const participantCount = await this.participantRepository.count({
-          where: {
-            roomId: id,
-          },
-        });
-
-        return {
+      rooms.map(
+        async ({
           id,
           title,
-          participantCount,
+          description,
+          ownerId,
+          goalLabel,
+          goalSymbol,
           createdAt,
-        };
-      }),
+        }) => {
+          const [participantCount, owner, performances] = await Promise.all([
+            this.participantRepository.count({
+              where: {
+                roomId: id,
+              },
+            }),
+            this.userRepository.findOne({
+              where: {
+                id: ownerId,
+              },
+            }),
+            this.performanceRepository.find({
+              where: {
+                roomId: id,
+              },
+            }),
+          ]);
+
+          const performanceValue =
+            performances.length === 0
+              ? -1
+              : performances.reduce((prev, curr) => prev + curr.value, 0) /
+                performances.length;
+
+          return {
+            id,
+            title,
+            description,
+            owner: {
+              id: owner.id,
+              name: owner.name,
+              email: owner.email,
+              avatarId: owner.avatarId,
+              updatedAt: owner.updatedAt,
+              createdAt: owner.createdAt,
+            },
+            performance: {
+              label: goalLabel,
+              value: performanceValue,
+              symbol: goalSymbol,
+            },
+            participantCount,
+            createdAt,
+          };
+        },
+      ),
     );
 
     return new UseCaseOk({

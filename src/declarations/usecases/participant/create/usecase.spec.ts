@@ -1,4 +1,5 @@
 import { ParticipantEntity } from "src/declarations/entities/participant";
+import { PerformanceEntity } from "src/declarations/entities/performance";
 import { RoomEntity } from "src/declarations/entities/room";
 import { UserEntity } from "src/declarations/entities/user";
 import { MockAuthProvider } from "src/implementations/providers/auth/mock";
@@ -9,7 +10,7 @@ import { CreateParticipantUseCase } from "./usecase";
 describe("Try to create a participant", () => {
   const uuidProvider = new MockUuidProvider();
 
-  uuidProvider.v4.mockReturnValue("an uuid");
+  uuidProvider.generate.mockReturnValue("an uuid");
 
   const authProvider = new MockAuthProvider();
 
@@ -34,6 +35,11 @@ describe("Try to create a participant", () => {
   roomRepository.findOne.mockResolvedValue({
     id: "an id",
     title: "a title",
+    description: "a description",
+    ownerId: "an owner id",
+    goalLabel: "goal label",
+    goalType: "done",
+    goalSymbol: "g",
     createdAt: new Date(),
   });
 
@@ -55,12 +61,25 @@ describe("Try to create a participant", () => {
     joinedAt: new Date(),
   });
 
+  const performanceRepository = new MockRepository<PerformanceEntity>();
+
+  performanceRepository.find.mockResolvedValue(
+    [...Array(10)].map((_, i) => ({
+      id: `id ${i}`,
+      userId: "an user id",
+      roomId: "an room Id",
+      value: 1,
+      createdAt: new Date(),
+    })),
+  );
+
   const usecase = new CreateParticipantUseCase(
     authProvider,
     uuidProvider,
     userRepository,
     roomRepository,
     participantRepository,
+    performanceRepository,
   );
 
   it("should fail for an invalid access token", async () => {

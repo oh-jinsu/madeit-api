@@ -19,7 +19,7 @@ import { UserEntity } from "src/declarations/entities/user";
 import { ImageEntity } from "src/declarations/entities/image";
 import { RoomEntity } from "src/declarations/entities/room";
 import { ParticipantEntity } from "src/declarations/entities/participant";
-import { GoalEntity } from "src/declarations/entities/goal";
+import { PerformanceEntity } from "src/declarations/entities/performance";
 
 @Global()
 @Module({
@@ -30,7 +30,7 @@ import { GoalEntity } from "src/declarations/entities/goal";
       ImageEntity,
       RoomEntity,
       ParticipantEntity,
-      GoalEntity,
+      PerformanceEntity,
     ]),
   ],
   providers: [

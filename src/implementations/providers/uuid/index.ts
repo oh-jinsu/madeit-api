@@ -1,8 +1,8 @@
 import { UuidProvider } from "src/declarations/providers/uuid";
-import uuid from "uuid";
+import { v4 } from "uuid";
 
 export class UuidProviderImpl implements UuidProvider {
-  v4(): string {
-    return uuid.v4();
+  generate(): string {
+    return v4();
   }
 }

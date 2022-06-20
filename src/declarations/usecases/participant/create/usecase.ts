@@ -13,6 +13,7 @@ import { ParticipantEntity } from "src/declarations/entities/participant";
 import { RoomEntity } from "src/declarations/entities/room";
 import { UserEntity } from "src/declarations/entities/user";
 import { Repository } from "typeorm";
+import { PerformanceEntity } from "src/declarations/entities/performance";
 
 export type Params = {
   readonly accessToken: string;
@@ -33,6 +34,8 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
     private readonly roomRepository: Repository<RoomEntity>,
     @InjectRepository(ParticipantEntity)
     private readonly participantRepository: Repository<ParticipantEntity>,
+    @InjectRepository(PerformanceEntity)
+    private readonly performanceRepository: Repository<PerformanceEntity>,
   ) {
     super(authProvider);
   }
@@ -53,6 +56,12 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
       return new UseCaseException(2);
     }
 
+    const owner = await this.userRepository.findOne({
+      where: {
+        id: room.ownerId,
+      },
+    });
+
     const option = await this.participantRepository.findOne({
       where: {
         userId: id,
@@ -65,7 +74,7 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
     }
 
     const newone = this.participantRepository.create({
-      id: this.uuidProvider.v4(),
+      id: this.uuidProvider.generate(),
       userId: id,
       roomId,
     });
@@ -77,6 +86,18 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
         roomId,
       },
     });
+
+    const performances = await this.performanceRepository.find({
+      where: {
+        roomId,
+      },
+    });
+
+    const performanceValue =
+      performances.length === 0
+        ? -1
+        : performances.reduce((prev, curr) => prev + curr.value, 0) /
+          performances.length;
 
     return new UseCaseOk({
       id: participant.id,
@@ -91,6 +112,20 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
       room: {
         id: room.id,
         title: room.title,
+        description: room.description,
+        owner: {
+          id: owner.id,
+          name: owner.name,
+          email: owner.email,
+          avatarId: owner.avatarId,
+          updatedAt: owner.updatedAt,
+          createdAt: owner.createdAt,
+        },
+        performance: {
+          label: room.goalLabel,
+          value: performanceValue,
+          symbol: room.goalSymbol,
+        },
         participantCount,
         createdAt: room.createdAt,
       },

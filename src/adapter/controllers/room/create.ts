@@ -11,6 +11,18 @@ import { CreateRoomUseCase } from "src/declarations/usecases/room/create/usecase
 export class RequestBody {
   @IsString()
   title: string;
+
+  @IsString()
+  description: string;
+
+  @IsString()
+  goal_label: string;
+
+  @IsString()
+  goal_type: "done" | "number" | "time" | "duration";
+
+  @IsString()
+  goal_symbol: string;
 }
 
 @Throttle(1, 0.1)
@@ -23,11 +35,22 @@ export class CreateRoomController extends AbstractController {
   @Post()
   async receive(
     @BearerToken() accessToken: string,
-    @Body() { title }: RequestBody,
+    @Body()
+    {
+      title,
+      description,
+      goal_label: goalLabel,
+      goal_type: goalType,
+      goal_symbol: goalSymbol,
+    }: RequestBody,
   ) {
     const result = await this.usecase.execute({
       accessToken,
+      description,
       title,
+      goalLabel,
+      goalType,
+      goalSymbol,
     });
 
     return this.response(result);

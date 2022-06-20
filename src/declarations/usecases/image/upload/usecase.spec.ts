@@ -9,7 +9,7 @@ import { UploadImageUseCase } from "./usecase";
 describe("Try to upload image", () => {
   const uuidProvider = new MockUuidProvider();
 
-  uuidProvider.v4.mockReturnValue("an uuid");
+  uuidProvider.generate.mockReturnValue("an uuid");
 
   const authProvider = new MockAuthProvider();
 
