@@ -5,8 +5,8 @@ import {
   WebSocketServer,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { VerifyAuthUseCase } from "src/domain/usecases/auth/verify/usecase";
-import { FindMyRoomsUsecase } from "src/domain/usecases/room/find_mine/usecase";
+import { VerifyAuthUseCase } from "src/declarations/usecases/auth/verify/usecase";
+import { FindMyRoomsUsecase } from "src/declarations/usecases/room/find_mine/usecase";
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {

@@ -8,7 +8,7 @@ import { BearerToken } from "src/adapter/decorators/bearer_token";
 import {
   UpdateMeDto,
   UpdateMeUseCase,
-} from "src/domain/usecases/user/update_me/usecase";
+} from "src/declarations/usecases/user/update_me/usecase";
 
 @Throttle(1, 0.1)
 @Controller("users/me")

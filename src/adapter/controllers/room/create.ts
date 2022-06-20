@@ -6,7 +6,7 @@ import {
   ExceptionResponse,
 } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
-import { CreateRoomUseCase } from "src/domain/usecases/room/create/usecase";
+import { CreateRoomUseCase } from "src/declarations/usecases/room/create/usecase";
 
 export class RequestBody {
   @IsString()

@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { AbstractController } from "src/adapter/common/adapter";
-import { FindRoomsUseCase } from "src/domain/usecases/room/find/usecase";
+import { FindRoomsUseCase } from "src/declarations/usecases/room/find/usecase";
 
 @Throttle(1, 0.1)
 @Controller("rooms")

@@ -5,7 +5,7 @@ import {
   AbstractController,
   ExceptionResponse,
 } from "src/adapter/common/adapter";
-import { SignUpUseCase } from "src/domain/usecases/auth/sign_up/usecase";
+import { SignUpUseCase } from "src/declarations/usecases/auth/sign_up/usecase";
 export class RequestBody {
   @IsString()
   id_token: string;

@@ -1,6 +1,6 @@
 import { Global, Module } from "@nestjs/common";
-import { FileRepository } from "src/domain/repositories/file";
-import { FileRepositoryImpl } from "src/infrastructure/repositories/file";
+import { FileRepository } from "src/declarations/repositories/file";
+import { FileRepositoryImpl } from "src/implementations/repositories/file";
 
 @Global()
 @Module({

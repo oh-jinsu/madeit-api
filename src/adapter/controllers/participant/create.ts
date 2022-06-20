@@ -7,7 +7,7 @@ import {
 } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { SocketGateway } from "src/adapter/gateways/socket";
-import { CreateParticipantUseCase } from "src/domain/usecases/participant/create/usecase";
+import { CreateParticipantUseCase } from "src/declarations/usecases/participant/create/usecase";
 
 export class RequestBody {
   @IsString()

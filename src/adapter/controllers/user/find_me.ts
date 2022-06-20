@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { FindMeUseCase } from "src/domain/usecases/user/find_me/usecase";
+import { FindMeUseCase } from "src/declarations/usecases/user/find_me/usecase";
 import { Throttle } from "@nestjs/throttler";
 import {
   AbstractController,

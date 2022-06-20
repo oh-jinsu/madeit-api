@@ -2,7 +2,7 @@ import { Controller, Get } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { AbstractController } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
-import { FindMyRoomsUsecase } from "src/domain/usecases/room/find_mine/usecase";
+import { FindMyRoomsUsecase } from "src/declarations/usecases/room/find_mine/usecase";
 
 @Throttle(1, 0.1)
 @Controller("rooms/mine")

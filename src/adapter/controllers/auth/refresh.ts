@@ -5,7 +5,7 @@ import {
   AbstractController,
   ExceptionResponse,
 } from "src/adapter/common/adapter";
-import { RefreshAuthUseCase } from "src/domain/usecases/auth/refresh/usecase";
+import { RefreshAuthUseCase } from "src/declarations/usecases/auth/refresh/usecase";
 
 export class RequestBody {
   @IsString()

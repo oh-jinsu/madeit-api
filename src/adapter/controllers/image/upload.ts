@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from "express";
-import { UploadImageUseCase } from "src/domain/usecases/image/upload/usecase";
+import { UploadImageUseCase } from "src/declarations/usecases/image/upload/usecase";
 import { Throttle } from "@nestjs/throttler";
 import { AbstractController } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";

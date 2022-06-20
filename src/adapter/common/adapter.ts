@@ -1,5 +1,5 @@
 import { HttpException } from "@nestjs/common";
-import { UseCaseResult } from "src/domain/common/usecase_result";
+import { UseCaseResult } from "src/declarations/common/usecase_result";
 
 export type ExceptionResponse = {
   status: number;

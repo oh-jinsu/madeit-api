@@ -1,7 +1,7 @@
 import { Controller, Delete, HttpCode } from "@nestjs/common";
 import { AbstractController } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
-import { DeleteAuthUseCase } from "src/domain/usecases/auth/delete/usecase";
+import { DeleteAuthUseCase } from "src/declarations/usecases/auth/delete/usecase";
 
 @Controller("auth")
 export class DeleteAuthController extends AbstractController {

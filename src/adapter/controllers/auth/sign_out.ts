@@ -5,7 +5,7 @@ import {
   ExceptionResponse,
 } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
-import { SignOutUseCase } from "src/domain/usecases/auth/sign_out/usecase";
+import { SignOutUseCase } from "src/declarations/usecases/auth/sign_out/usecase";
 
 @Throttle(1, 0.1)
 @Controller("auth/signout")
