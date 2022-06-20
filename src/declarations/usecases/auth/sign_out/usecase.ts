@@ -7,7 +7,7 @@ import {
   UseCaseResult,
 } from "src/declarations/common/usecase_result";
 import { AuthProvider } from "src/declarations/providers/auth";
-import { NothingResult } from "src/declarations/results/common/nothing";
+import { NothingModel } from "src/declarations/models/common/nothing";
 import { AuthEntity } from "src/declarations/entities/auth";
 import { Repository } from "typeorm";
 
@@ -16,7 +16,7 @@ export type Params = {
 };
 
 @Injectable()
-export class SignOutUseCase extends AuthorizedUseCase<Params, NothingResult> {
+export class SignOutUseCase extends AuthorizedUseCase<Params, NothingModel> {
   constructor(
     authProvider: AuthProvider,
     @InjectRepository(AuthEntity)
@@ -27,7 +27,7 @@ export class SignOutUseCase extends AuthorizedUseCase<Params, NothingResult> {
 
   protected async executeWithAuth(
     id: string,
-  ): Promise<UseCaseResult<NothingResult>> {
+  ): Promise<UseCaseResult<NothingModel>> {
     const option = await this.authRepository.findOne({ where: { id } });
 
     if (!option) {

@@ -8,7 +8,7 @@ import {
 } from "src/declarations/common/usecase_result";
 import { AuthProvider } from "src/declarations/providers/auth";
 import { UuidProvider } from "src/declarations/providers/uuid";
-import { ParticipantResult } from "src/declarations/results/participant";
+import { ParticipantModel } from "src/declarations/models/participant";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { RoomEntity } from "src/declarations/entities/room";
 import { UserEntity } from "src/declarations/entities/user";
@@ -23,7 +23,7 @@ export type Params = {
 @Injectable()
 export class CreateParticipantUseCase extends AuthorizedUseCase<
   Params,
-  ParticipantResult
+  ParticipantModel
 > {
   constructor(
     authProvider: AuthProvider,
@@ -43,7 +43,7 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
   protected async executeWithAuth(
     id: string,
     { roomId }: Params,
-  ): Promise<UseCaseResult<ParticipantResult>> {
+  ): Promise<UseCaseResult<ParticipantModel>> {
     const user = await this.userRepository.findOne({ where: { id: id } });
 
     if (!user) {

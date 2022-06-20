@@ -18,13 +18,13 @@ export type Params = {
   readonly mimetype: string;
 };
 
-export type Result = {
+export type Model = {
   readonly id: string;
   readonly createdAt: Date;
 };
 
 @Injectable()
-export class UploadImageUseCase extends AuthorizedUseCase<Params, Result> {
+export class UploadImageUseCase extends AuthorizedUseCase<Params, Model> {
   constructor(
     authProvider: AuthProvider,
     private readonly uuidProvider: UuidProvider,
@@ -39,7 +39,7 @@ export class UploadImageUseCase extends AuthorizedUseCase<Params, Result> {
   protected async executeWithAuth(
     userId: string,
     { buffer, mimetype }: Params,
-  ): Promise<UseCaseResult<Result>> {
+  ): Promise<UseCaseResult<Model>> {
     const id = this.uuidProvider.generate();
 
     const newone = this.imageRepository.create({ id, userId });

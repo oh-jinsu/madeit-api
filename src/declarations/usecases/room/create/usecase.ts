@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { RoomResult } from "src/declarations/results/room";
+import { RoomModel } from "src/declarations/models/room";
 import {
   UseCaseException,
   UseCaseOk,
@@ -24,7 +24,7 @@ export type Params = {
 };
 
 @Injectable()
-export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomResult> {
+export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomModel> {
   constructor(
     authProvider: AuthProvider,
     private readonly uuidProvider: UuidProvider,
@@ -41,7 +41,7 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomResult> {
   protected async executeWithAuth(
     userId: string,
     { title, description, goalLabel, goalSymbol, goalType }: Params,
-  ): Promise<UseCaseResult<RoomResult>> {
+  ): Promise<UseCaseResult<RoomModel>> {
     const titleLength = ~-encodeURI(title).split(/%..|./).length;
 
     if (titleLength < 6) {

@@ -6,7 +6,7 @@ import {
   UseCaseResult,
 } from "src/declarations/common/usecase_result";
 import { AuthProvider } from "src/declarations/providers/auth";
-import { RoomResult } from "src/declarations/results/room";
+import { RoomModel } from "src/declarations/models/room";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { RoomEntity } from "src/declarations/entities/room";
 import { Repository } from "typeorm";
@@ -18,10 +18,7 @@ export type Params = {
 };
 
 @Injectable()
-export class FindMyRoomsUsecase extends AuthorizedUseCase<
-  Params,
-  RoomResult[]
-> {
+export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
   constructor(
     authProvider: AuthProvider,
     @InjectRepository(RoomEntity)
@@ -38,7 +35,7 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
 
   protected async executeWithAuth(
     userId: string,
-  ): Promise<UseCaseResult<RoomResult[]>> {
+  ): Promise<UseCaseResult<RoomModel[]>> {
     const participants = await this.participantRepository.find({
       where: {
         userId,

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { UseCase } from "src/declarations/common/usecase";
 import { ListOf } from "src/declarations/common/types";
-import { RoomResult } from "src/declarations/results/room";
+import { RoomModel } from "src/declarations/models/room";
 import {
   UseCaseOk,
   UseCaseResult,
@@ -19,7 +19,7 @@ export type Params = {
 };
 
 @Injectable()
-export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
+export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomModel>> {
   constructor(
     @InjectRepository(RoomEntity)
     private readonly roomRepository: Repository<RoomEntity>,
@@ -34,7 +34,7 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
   async execute({
     cursor,
     limit,
-  }: Params): Promise<UseCaseResult<ListOf<RoomResult>>> {
+  }: Params): Promise<UseCaseResult<ListOf<RoomModel>>> {
     const cursored = cursor
       ? await this.roomRepository.findOne({
           where: {

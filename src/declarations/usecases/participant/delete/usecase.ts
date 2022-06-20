@@ -15,15 +15,12 @@ export type Params = {
   readonly roomId: string;
 };
 
-export type Result = {
+export type Model = {
   readonly userId: string;
 };
 
 @Injectable()
-export class DeleteParticipantUseCase extends AuthorizedUseCase<
-  Params,
-  Result
-> {
+export class DeleteParticipantUseCase extends AuthorizedUseCase<Params, Model> {
   constructor(
     authProvider: AuthProvider,
     @InjectRepository(ParticipantEntity)
@@ -35,7 +32,7 @@ export class DeleteParticipantUseCase extends AuthorizedUseCase<
   protected async executeWithAuth(
     userId: string,
     { roomId }: Params,
-  ): Promise<UseCaseResult<Result>> {
+  ): Promise<UseCaseResult<Model>> {
     const participant = await this.participantRepository.findOne({
       where: {
         userId,

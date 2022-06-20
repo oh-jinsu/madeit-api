@@ -7,7 +7,7 @@ import {
   UseCaseResult,
 } from "src/declarations/common/usecase_result";
 import { AuthProvider } from "src/declarations/providers/auth";
-import { UserResult } from "src/declarations/results/user";
+import { UserModel } from "src/declarations/models/user";
 import { UserEntity } from "src/declarations/entities/user";
 import { Repository } from "typeorm";
 
@@ -16,7 +16,7 @@ export type Params = {
 };
 
 @Injectable()
-export class FindMeUseCase extends AuthorizedUseCase<Params, UserResult> {
+export class FindMeUseCase extends AuthorizedUseCase<Params, UserModel> {
   constructor(
     authProvider: AuthProvider,
     @InjectRepository(UserEntity)
@@ -27,7 +27,7 @@ export class FindMeUseCase extends AuthorizedUseCase<Params, UserResult> {
 
   protected async executeWithAuth(
     id: string,
-  ): Promise<UseCaseResult<UserResult>> {
+  ): Promise<UseCaseResult<UserModel>> {
     const user = await this.userRepository.findOne({
       where: { id },
     });

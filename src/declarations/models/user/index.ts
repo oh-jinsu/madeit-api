@@ -1,4 +1,4 @@
-export type UserResult = {
+export type UserModel = {
   readonly id: string;
   readonly email?: string;
   readonly name: string;

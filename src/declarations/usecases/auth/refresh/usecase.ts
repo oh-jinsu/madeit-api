@@ -15,12 +15,12 @@ export type Params = {
   readonly refreshToken: string;
 };
 
-export type Result = {
+export type Model = {
   readonly accessToken: string;
 };
 
 @Injectable()
-export class RefreshAuthUseCase implements UseCase<Params, Result> {
+export class RefreshAuthUseCase implements UseCase<Params, Model> {
   constructor(
     private readonly authProvider: AuthProvider,
     private readonly hashProvider: HashProvider,
@@ -28,7 +28,7 @@ export class RefreshAuthUseCase implements UseCase<Params, Result> {
     private readonly authRepository: Repository<AuthEntity>,
   ) {}
 
-  async execute({ refreshToken }: Params): Promise<UseCaseResult<Result>> {
+  async execute({ refreshToken }: Params): Promise<UseCaseResult<Model>> {
     const isVerified = await this.authProvider.verifyRefreshToken(refreshToken);
 
     if (!isVerified) {

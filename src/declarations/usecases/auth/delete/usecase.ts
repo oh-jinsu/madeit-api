@@ -6,7 +6,7 @@ import {
   UseCaseResult,
 } from "src/declarations/common/usecase_result";
 import { AuthProvider } from "src/declarations/providers/auth";
-import { NothingResult } from "src/declarations/results/common/nothing";
+import { NothingModel } from "src/declarations/models/common/nothing";
 import { AuthEntity } from "src/declarations/entities/auth";
 import { UserEntity } from "src/declarations/entities/user";
 import { Repository } from "typeorm";
@@ -16,10 +16,7 @@ export type Params = {
 };
 
 @Injectable()
-export class DeleteAuthUseCase extends AuthorizedUseCase<
-  Params,
-  NothingResult
-> {
+export class DeleteAuthUseCase extends AuthorizedUseCase<Params, NothingModel> {
   constructor(
     authProvider: AuthProvider,
     @InjectRepository(AuthEntity)
@@ -32,7 +29,7 @@ export class DeleteAuthUseCase extends AuthorizedUseCase<
 
   protected async executeWithAuth(
     id: string,
-  ): Promise<UseCaseResult<NothingResult>> {
+  ): Promise<UseCaseResult<NothingModel>> {
     await this.authRepository.delete(id);
 
     await this.userRepository.delete(id);

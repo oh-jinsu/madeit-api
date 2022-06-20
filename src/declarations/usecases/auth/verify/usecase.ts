@@ -11,15 +11,15 @@ export type Params = {
   readonly accessToken: string;
 };
 
-export type Result = {
+export type Model = {
   readonly id: string;
 };
 
 @Injectable()
-export class VerifyAuthUseCase implements UseCase<Params, Result> {
+export class VerifyAuthUseCase implements UseCase<Params, Model> {
   constructor(private readonly authProvider: AuthProvider) {}
 
-  async execute({ accessToken }: Params): Promise<UseCaseResult<Result>> {
+  async execute({ accessToken }: Params): Promise<UseCaseResult<Model>> {
     const isVerified = await this.authProvider.verifyAccessToken(accessToken);
 
     if (!isVerified) {

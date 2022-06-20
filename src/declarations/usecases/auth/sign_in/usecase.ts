@@ -11,7 +11,7 @@ import { AuthProvider } from "src/declarations/providers/auth";
 import { GoogleAuthProvider } from "src/declarations/providers/google_auth";
 import { HashProvider } from "src/declarations/providers/hash";
 import { KakaoAuthProvider } from "src/declarations/providers/kakao_auth";
-import { AuthCrendentialResult } from "src/declarations/results/auth/crendential";
+import { AuthCrendentialModel } from "src/declarations/models/auth/crendential";
 import { AuthEntity } from "src/declarations/entities/auth";
 import { Repository } from "typeorm";
 
@@ -21,7 +21,7 @@ export type Params = {
 };
 
 @Injectable()
-export class SignInUseCase implements UseCase<Params, AuthCrendentialResult> {
+export class SignInUseCase implements UseCase<Params, AuthCrendentialModel> {
   constructor(
     private readonly authProvider: AuthProvider,
     private readonly appleAuthProvider: AppleAuthProvider,
@@ -35,7 +35,7 @@ export class SignInUseCase implements UseCase<Params, AuthCrendentialResult> {
   async execute({
     provider,
     idToken,
-  }: Params): Promise<UseCaseResult<AuthCrendentialResult>> {
+  }: Params): Promise<UseCaseResult<AuthCrendentialModel>> {
     const { sub: key } = await (async () => {
       switch (provider) {
         case "apple":
