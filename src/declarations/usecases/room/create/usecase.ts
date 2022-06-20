@@ -42,14 +42,24 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomModel> {
     userId: string,
     { title, description, goalLabel, goalSymbol, goalType }: Params,
   ): Promise<UseCaseResult<RoomModel>> {
-    const titleLength = ~-encodeURI(title).split(/%..|./).length;
+    const owner = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
 
-    if (titleLength < 6) {
+    if (!owner) {
       return new UseCaseException(1);
     }
 
-    if (titleLength > 96) {
+    const titleLength = ~-encodeURI(title).split(/%..|./).length;
+
+    if (titleLength < 6) {
       return new UseCaseException(2);
+    }
+
+    if (titleLength > 96) {
+      return new UseCaseException(3);
     }
 
     const newRoom = this.roomRepository.create({
@@ -71,12 +81,6 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomModel> {
     });
 
     await this.participantRepository.save(newParticipant);
-
-    const owner = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
 
     return new UseCaseOk({
       id: room.id,

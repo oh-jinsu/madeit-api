@@ -60,10 +60,15 @@ export class CreateRoomController extends AbstractController {
     switch (code) {
       case 1:
         return {
+          status: 404,
+          message: "이용자를 찾지 못했습니다.",
+        };
+      case 2:
+        return {
           status: 400,
           message: "제목은 2글자 이상이어야 합니다.",
         };
-      case 2:
+      case 3:
         return {
           status: 400,
           message: "제목은 32글자 이하여야 합니다.",
