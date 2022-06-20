@@ -1,6 +1,10 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthEntity } from "src/declarations/entities/auth";
+import { ChatEntity } from "src/declarations/entities/chat";
+import { ChatImageEntity } from "src/declarations/entities/chat/image";
+import { ChatMessageEntity } from "src/declarations/entities/chat/message";
+import { ChatPhotologEntity } from "src/declarations/entities/chat/photolog";
 import { ImageEntity } from "src/declarations/entities/image";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { PerformanceEntity } from "src/declarations/entities/performance";
@@ -27,6 +31,10 @@ import { FileRepositoryImpl } from "src/implementations/repositories/file";
           RoomEntity,
           ParticipantEntity,
           PerformanceEntity,
+          ChatEntity,
+          ChatMessageEntity,
+          ChatImageEntity,
+          ChatPhotologEntity,
         ],
         synchronize: true,
         dropSchema: Boolean(process.env.DROP_SCHEME),

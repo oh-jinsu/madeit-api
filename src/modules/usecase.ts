@@ -20,6 +20,11 @@ import { ImageEntity } from "src/declarations/entities/image";
 import { RoomEntity } from "src/declarations/entities/room";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { PerformanceEntity } from "src/declarations/entities/performance";
+import { ChatPhotologEntity } from "src/declarations/entities/chat/photolog";
+import { ChatEntity } from "src/declarations/entities/chat";
+import { ChatMessageEntity } from "src/declarations/entities/chat/message";
+import { ChatImageEntity } from "src/declarations/entities/chat/image";
+import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase";
 
 @Global()
 @Module({
@@ -31,6 +36,10 @@ import { PerformanceEntity } from "src/declarations/entities/performance";
       RoomEntity,
       ParticipantEntity,
       PerformanceEntity,
+      ChatEntity,
+      ChatMessageEntity,
+      ChatImageEntity,
+      ChatPhotologEntity,
     ]),
   ],
   providers: [
@@ -51,6 +60,8 @@ import { PerformanceEntity } from "src/declarations/entities/performance";
     CreateParticipantUseCase,
     DeleteParticipantUseCase,
     // Participant Module
+    CreateChatUseCase,
+    // Chat Module
     UploadImageUseCase,
     // Image Module
   ],
@@ -72,6 +83,8 @@ import { PerformanceEntity } from "src/declarations/entities/performance";
     CreateParticipantUseCase,
     DeleteParticipantUseCase,
     // Participant Module
+    CreateChatUseCase,
+    // Chat Module
     UploadImageUseCase,
     // Image Module
   ],

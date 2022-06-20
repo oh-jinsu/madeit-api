@@ -4,6 +4,7 @@ import { RefreshAuthController } from "src/adapter/controllers/auth/refresh";
 import { SignInController } from "src/adapter/controllers/auth/sign_in";
 import { SignOutController } from "src/adapter/controllers/auth/sign_out";
 import { SignUpController } from "src/adapter/controllers/auth/sign_up";
+import { CreateChatController } from "src/adapter/controllers/chat/create";
 import { UploadImageController } from "src/adapter/controllers/image/upload";
 import { CreateParticipantController } from "src/adapter/controllers/participant/create";
 import { DeleteParticipantController } from "src/adapter/controllers/participant/delete";
@@ -33,6 +34,8 @@ import { SocketGateway } from "src/adapter/gateways/socket";
     CreateParticipantController,
     DeleteParticipantController,
     // Participant Module
+    CreateChatController,
+    // Chat Module
     UploadImageController,
     // Image Module
   ],
