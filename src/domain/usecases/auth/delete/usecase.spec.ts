@@ -1,6 +1,7 @@
+import { AuthEntity } from "src/domain/entities/auth";
+import { UserEntity } from "src/domain/entities/user";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockAuthRepository } from "src/infrastructure/repositories/auth/mock";
-import { MockUserRepository } from "src/infrastructure/repositories/user/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { DeleteAuthUseCase } from "./usecase";
 
 describe("Try to delete the auth", () => {
@@ -8,13 +9,13 @@ describe("Try to delete the auth", () => {
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+  authProvider.extractClaim.mockResolvedValue({ sub: "an id" });
 
-  const authRepository = new MockAuthRepository();
+  const authRepository = new MockRepository<AuthEntity>();
 
   authRepository.delete.mockResolvedValue(null);
 
-  const userRepository = new MockUserRepository();
+  const userRepository = new MockRepository<UserEntity>();
 
   userRepository.delete.mockResolvedValue(null);
 

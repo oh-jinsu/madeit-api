@@ -1,41 +1,26 @@
-import { None, Some } from "src/domain/common/enum";
+import { AuthEntity } from "src/domain/entities/auth";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockAuthRepository } from "src/infrastructure/repositories/auth/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { SignOutUseCase } from "./usecase";
 
-describe("test a sign out usecase", () => {
+describe("Try to sign out", () => {
   const authProvider = new MockAuthProvider();
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+  authProvider.extractClaim.mockResolvedValue({ sub: "an id" });
 
-  const authRepository = new MockAuthRepository();
+  const authRepository = new MockRepository<AuthEntity>();
 
-  authRepository.findOne.mockImplementation(
-    async (id: string) =>
-      new Some({
-        id,
-        key: "a key",
-        from: "somewhere",
-        accessToken: "an access token",
-        refreshToken: "a refresh token",
-        updatedAt: new Date(),
-        createdAt: new Date(),
-      }),
-  );
-
-  authRepository.update.mockImplementation(
-    async (id, { key, from, accessToken, refreshToken }) => ({
-      id,
-      key: key ?? "a key",
-      from: from ?? "somewhere",
-      accessToken: accessToken ?? "an access token",
-      refreshToken: refreshToken ?? "a refresh token",
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    }),
-  );
+  authRepository.findOne.mockResolvedValue({
+    id: "an id",
+    key: "a key",
+    from: "somewhere",
+    accessToken: "an access token",
+    refreshToken: "a refresh token",
+    updatedAt: new Date(),
+    createdAt: new Date(),
+  });
 
   const usecase = new SignOutUseCase(authProvider, authRepository);
 
@@ -54,7 +39,7 @@ describe("test a sign out usecase", () => {
   });
 
   it("should fail for an invalid token", async () => {
-    authRepository.findOne.mockResolvedValueOnce(new None());
+    authRepository.findOne.mockResolvedValueOnce(null);
 
     const accessToken = "an access token";
 
@@ -68,18 +53,15 @@ describe("test a sign out usecase", () => {
   });
 
   it("should fail for a conflict", async () => {
-    authRepository.findOne.mockImplementationOnce(
-      async (id: string) =>
-        new Some({
-          id,
-          key: "a key",
-          from: "somewhere",
-          accessToken: null,
-          refreshToken: null,
-          updatedAt: new Date(),
-          createdAt: new Date(),
-        }),
-    );
+    authRepository.findOne.mockResolvedValueOnce({
+      id: "an id",
+      key: "a key",
+      from: "somewhere",
+      accessToken: null,
+      refreshToken: null,
+      updatedAt: new Date(),
+      createdAt: new Date(),
+    });
 
     const accessToken = "an access token";
 

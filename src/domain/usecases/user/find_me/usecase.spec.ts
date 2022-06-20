@@ -1,6 +1,6 @@
-import { None, Some } from "src/domain/common/enum";
+import { UserEntity } from "src/domain/entities/user";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockUserRepository } from "src/infrastructure/repositories/user/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { FindMeUseCase } from "./usecase";
 
 describe("Try to find me", () => {
@@ -8,21 +8,18 @@ describe("Try to find me", () => {
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+  authProvider.extractClaim.mockResolvedValue({ sub: "an id" });
 
-  const userRepository = new MockUserRepository();
+  const userRepository = new MockRepository<UserEntity>();
 
-  userRepository.findOne.mockImplementation(
-    async (id) =>
-      new Some({
-        id,
-        email: "an email",
-        name: "a name",
-        avatarId: "an avatar",
-        updatedAt: new Date(),
-        createdAt: new Date(),
-      }),
-  );
+  userRepository.findOne.mockResolvedValue({
+    id: "an id",
+    email: "an email",
+    name: "a name",
+    avatarId: "an avatar",
+    updatedAt: new Date(),
+    createdAt: new Date(),
+  });
 
   const usecase = new FindMeUseCase(authProvider, userRepository);
 
@@ -41,7 +38,7 @@ describe("Try to find me", () => {
   });
 
   it("should fail for an absent user", async () => {
-    userRepository.findOne.mockResolvedValueOnce(new None());
+    userRepository.findOne.mockResolvedValueOnce(null);
 
     const accessToken = "an access token";
 

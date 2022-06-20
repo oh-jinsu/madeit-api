@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider, IssueTokenOptions } from "src/domain/providers/auth";
 
 @Injectable()
@@ -61,11 +60,9 @@ export class AuthProviderImpl implements AuthProvider {
     }
   }
 
-  async extractClaim(token: string): Promise<ClaimModel> {
-    const { sub } = this.jwtService.decode(token, {
+  async extractClaim(token: string): Promise<Record<string, any>> {
+    return this.jwtService.decode(token, {
       json: true,
     }) as Record<string, any>;
-
-    return { id: sub };
   }
 }

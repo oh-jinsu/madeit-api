@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { AuthorizedUseCase } from "src/domain/common/authorized_usecase";
 import {
   UseCaseException,
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
-import { ParticipantRepository } from "src/domain/repositories/participant";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { Repository } from "typeorm";
 
 export type Params = {
   readonly accessToken: string;
@@ -25,25 +26,28 @@ export class DeleteParticipantUseCase extends AuthorizedUseCase<
 > {
   constructor(
     authProvider: AuthProvider,
-    private readonly participantRepository: ParticipantRepository,
+    @InjectRepository(ParticipantEntity)
+    private readonly participantRepository: Repository<ParticipantEntity>,
   ) {
     super(authProvider);
   }
 
   protected async executeWithAuth(
-    { id: userId }: ClaimModel,
+    userId: string,
     { roomId }: Params,
   ): Promise<UseCaseResult<Result>> {
-    const participantOption = await this.participantRepository.findOne(
-      userId,
-      roomId,
-    );
+    const participant = await this.participantRepository.findOne({
+      where: {
+        userId,
+        roomId,
+      },
+    });
 
-    if (!participantOption.isSome()) {
+    if (!participant) {
       return new UseCaseException(1);
     }
 
-    await this.participantRepository.delete(participantOption.value.id);
+    await this.participantRepository.delete(participant.id);
 
     return new UseCaseOk({
       userId,

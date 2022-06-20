@@ -26,7 +26,7 @@ export class VerifyAuthUseCase implements UseCase<Params, Result> {
       return new UseCaseException(1);
     }
 
-    const { id } = await this.authProvider.extractClaim(accessToken);
+    const { sub: id } = await this.authProvider.extractClaim(accessToken);
 
     return new UseCaseOk({ id });
   }

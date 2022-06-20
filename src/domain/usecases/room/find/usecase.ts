@@ -3,8 +3,10 @@ import { UseCase } from "src/domain/common/usecase";
 import { ListOf } from "src/domain/common/types";
 import { RoomResult } from "src/domain/results/room";
 import { UseCaseOk, UseCaseResult } from "src/domain/common/usecase_result";
-import { ParticipantRepository } from "src/domain/repositories/participant";
-import { RoomRepository } from "src/domain/repositories/room";
+import { LessThan, Repository } from "typeorm";
+import { RoomEntity } from "src/domain/entities/room";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { InjectRepository } from "@nestjs/typeorm";
 
 export type Params = {
   cursor?: string;
@@ -14,24 +16,47 @@ export type Params = {
 @Injectable()
 export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
   constructor(
-    private readonly roomRepository: RoomRepository,
-    private readonly participantRepository: ParticipantRepository,
+    @InjectRepository(RoomEntity)
+    private readonly roomRepository: Repository<RoomEntity>,
+    @InjectRepository(ParticipantEntity)
+    private readonly participantRepository: Repository<ParticipantEntity>,
   ) {}
 
   async execute({
     cursor,
     limit,
   }: Params): Promise<UseCaseResult<ListOf<RoomResult>>> {
-    const { next, items: rooms } = await this.roomRepository.find(
-      cursor,
-      limit,
-    );
+    const cursored = cursor
+      ? await this.roomRepository.findOne({
+          where: {
+            id: cursor,
+          },
+        })
+      : null;
+
+    const query = await this.roomRepository.find({
+      where: {
+        createdAt: LessThan(cursored?.createdAt || new Date()),
+      },
+      order: {
+        createdAt: "DESC",
+      },
+      take: limit ? limit + (cursored ? 0 : 1) : null,
+    });
+
+    if (cursored) {
+      query.unshift(cursored);
+    }
+
+    const next = limit && query.length === limit + 1 ? query.pop() : null;
 
     const items = await Promise.all(
-      rooms.map(async ({ id, title, createdAt }) => {
-        const participantCount = await this.participantRepository.countByRoomId(
-          id,
-        );
+      query.map(async ({ id, title, createdAt }) => {
+        const participantCount = await this.participantRepository.count({
+          where: {
+            roomId: id,
+          },
+        });
 
         return {
           id,
@@ -43,7 +68,7 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomResult>> {
     );
 
     return new UseCaseOk({
-      next,
+      next: next?.id,
       items,
     });
   }

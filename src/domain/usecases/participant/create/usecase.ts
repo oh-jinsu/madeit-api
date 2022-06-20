@@ -1,16 +1,18 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { AuthorizedUseCase } from "src/domain/common/authorized_usecase";
 import {
   UseCaseException,
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
-import { ParticipantRepository } from "src/domain/repositories/participant";
-import { RoomRepository } from "src/domain/repositories/room";
-import { UserRepository } from "src/domain/repositories/user";
+import { UuidProvider } from "src/domain/providers/uuid";
 import { ParticipantResult } from "src/domain/results/participant";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { RoomEntity } from "src/domain/entities/room";
+import { UserEntity } from "src/domain/entities/user";
+import { Repository } from "typeorm";
 
 export type Params = {
   readonly accessToken: string;
@@ -24,50 +26,57 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
 > {
   constructor(
     authProvider: AuthProvider,
-    private readonly userRepository: UserRepository,
-    private readonly roomRepository: RoomRepository,
-    private readonly participantRepository: ParticipantRepository,
+    private readonly uuidProvider: UuidProvider,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(RoomEntity)
+    private readonly roomRepository: Repository<RoomEntity>,
+    @InjectRepository(ParticipantEntity)
+    private readonly participantRepository: Repository<ParticipantEntity>,
   ) {
     super(authProvider);
   }
 
   protected async executeWithAuth(
-    { id: userId }: ClaimModel,
+    id: string,
     { roomId }: Params,
   ): Promise<UseCaseResult<ParticipantResult>> {
-    const userOption = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findOne({ where: { id: id } });
 
-    if (!userOption.isSome()) {
+    if (!user) {
       return new UseCaseException(1);
     }
 
-    const user = userOption.value;
+    const room = await this.roomRepository.findOne({ where: { id: roomId } });
 
-    const roomOption = await this.roomRepository.findOne(roomId);
-
-    if (!roomOption.isSome()) {
+    if (!room) {
       return new UseCaseException(2);
     }
 
-    const room = roomOption.value;
+    const option = await this.participantRepository.findOne({
+      where: {
+        userId: id,
+        roomId,
+      },
+    });
 
-    const participantOption = await this.participantRepository.findOne(
-      user.id,
-      room.id,
-    );
-
-    if (participantOption.isSome()) {
+    if (option) {
       return new UseCaseException(3);
     }
 
-    const participant = await this.participantRepository.create(
-      user.id,
-      room.id,
-    );
+    const newone = this.participantRepository.create({
+      id: this.uuidProvider.v4(),
+      userId: id,
+      roomId,
+    });
 
-    const participantCount = await this.participantRepository.countByRoomId(
-      room.id,
-    );
+    const participant = await this.participantRepository.save(newone);
+
+    const participantCount = await this.participantRepository.count({
+      where: {
+        roomId,
+      },
+    });
 
     return new UseCaseOk({
       id: participant.id,

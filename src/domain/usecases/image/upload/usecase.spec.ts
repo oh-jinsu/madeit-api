@@ -1,25 +1,47 @@
+import { ImageEntity } from "src/domain/entities/image";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockImageRepository } from "src/infrastructure/repositories/image/mock";
+import { MockImageProvider } from "src/infrastructure/providers/image/mock";
+import { MockUuidProvider } from "src/infrastructure/providers/uuid/mock";
+import { MockFileRepository } from "src/infrastructure/repositories/file/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { UploadImageUseCase } from "./usecase";
 
-describe("test the upload image usecase", () => {
+describe("Try to upload image", () => {
+  const uuidProvider = new MockUuidProvider();
+
+  uuidProvider.v4.mockReturnValue("an uuid");
+
   const authProvider = new MockAuthProvider();
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
   authProvider.extractClaim.mockResolvedValue({
-    id: "an id",
+    sub: "sub",
   });
 
-  const imageRepository = new MockImageRepository();
+  const imageProvider = new MockImageProvider();
 
-  imageRepository.save.mockImplementation(async ({ userId }) => ({
+  imageProvider.resize.mockResolvedValue(Buffer.from("image"));
+
+  const imageRepository = new MockRepository<ImageEntity>();
+
+  imageRepository.create.mockResolvedValue({});
+
+  imageRepository.save.mockResolvedValue({
     id: "an id",
-    userId: userId,
+    userId: "an user id",
     createdAt: new Date(),
-  }));
+  });
 
-  const usecase = new UploadImageUseCase(authProvider, imageRepository);
+  const fileRepository = new MockFileRepository();
+
+  const usecase = new UploadImageUseCase(
+    authProvider,
+    uuidProvider,
+    imageProvider,
+    imageRepository,
+    fileRepository,
+  );
 
   it("should fail for an invalid access token", async () => {
     authProvider.verifyAccessToken.mockResolvedValueOnce(false);

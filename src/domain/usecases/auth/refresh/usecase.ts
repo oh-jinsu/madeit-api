@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { UseCase } from "src/domain/common/usecase";
 import {
   UseCaseException,
@@ -7,7 +8,8 @@ import {
 } from "src/domain/common/usecase_result";
 import { AuthProvider } from "src/domain/providers/auth";
 import { HashProvider } from "src/domain/providers/hash";
-import { AuthRepository } from "src/domain/repositories/auth";
+import { AuthEntity } from "src/domain/entities/auth";
+import { Repository } from "typeorm";
 
 export type Params = {
   readonly refreshToken: string;
@@ -22,7 +24,8 @@ export class RefreshAuthUseCase implements UseCase<Params, Result> {
   constructor(
     private readonly authProvider: AuthProvider,
     private readonly hashProvider: HashProvider,
-    private readonly authRepository: AuthRepository,
+    @InjectRepository(AuthEntity)
+    private readonly authRepository: Repository<AuthEntity>,
   ) {}
 
   async execute({ refreshToken }: Params): Promise<UseCaseResult<Result>> {
@@ -34,13 +37,11 @@ export class RefreshAuthUseCase implements UseCase<Params, Result> {
 
     const { id } = await this.authProvider.extractClaim(refreshToken);
 
-    const option = await this.authRepository.findOne(id);
+    const auth = await this.authRepository.findOne({ where: { id } });
 
-    if (!option.isSome()) {
+    if (!auth) {
       return new UseCaseException(2);
     }
-
-    const auth = option.value;
 
     if (
       !auth.refreshToken ||

@@ -9,14 +9,28 @@ import { DeleteParticipantUseCase } from "src/domain/usecases/participant/delete
 import { CreateRoomUseCase } from "src/domain/usecases/room/create/usecase";
 import { FindRoomsUseCase } from "src/domain/usecases/room/find/usecase";
 import { FindMyRoomsUsecase } from "src/domain/usecases/room/find_mine/usecase";
-import { SignInUseCase } from "src/domain/usecases/auth/signin/usecase";
-import { SignUpUseCase } from "src/domain/usecases/auth/signup/usecase";
-import { CreateMeUseCase } from "src/domain/usecases/user/create_me/usecase";
+import { SignInUseCase } from "src/domain/usecases/auth/sign_in/usecase";
+import { SignUpUseCase } from "src/domain/usecases/auth/sign_up/usecase";
 import { FindMeUseCase } from "src/domain/usecases/user/find_me/usecase";
 import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AuthEntity } from "src/domain/entities/auth";
+import { UserEntity } from "src/domain/entities/user";
+import { ImageEntity } from "src/domain/entities/image";
+import { RoomEntity } from "src/domain/entities/room";
+import { ParticipantEntity } from "src/domain/entities/participant";
 
 @Global()
 @Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      AuthEntity,
+      UserEntity,
+      ImageEntity,
+      RoomEntity,
+      ParticipantEntity,
+    ]),
+  ],
   providers: [
     VerifyAuthUseCase,
     DeleteAuthUseCase,
@@ -25,7 +39,6 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     SignUpUseCase,
     SignOutUseCase,
     // Auth Module
-    CreateMeUseCase,
     FindMeUseCase,
     UpdateMeUseCase,
     // User Module
@@ -47,7 +60,6 @@ import { UpdateMeUseCase } from "src/domain/usecases/user/update_me/usecase";
     SignUpUseCase,
     SignOutUseCase,
     // Auth Module
-    CreateMeUseCase,
     FindMeUseCase,
     UpdateMeUseCase,
     // User Module

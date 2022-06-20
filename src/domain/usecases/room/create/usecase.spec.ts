@@ -1,16 +1,22 @@
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { RoomEntity } from "src/domain/entities/room";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockParticipantRepository } from "src/infrastructure/repositories/participant/mock";
-import { MockRoomRepository } from "src/infrastructure/repositories/room/mock";
+import { MockUuidProvider } from "src/infrastructure/providers/uuid/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { CreateRoomUseCase } from "./usecase";
 
-describe("Try to find rooms", () => {
+describe("Try to create a room", () => {
+  const uuidProvider = new MockUuidProvider();
+
+  uuidProvider.v4.mockReturnValue("an uuid");
+
   const authProvider = new MockAuthProvider();
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+  authProvider.extractClaim.mockResolvedValue({ sub: "an id" });
 
-  const roomRepository = new MockRoomRepository();
+  const roomRepository = new MockRepository<RoomEntity>();
 
   roomRepository.create.mockResolvedValue({
     id: "an id",
@@ -18,7 +24,13 @@ describe("Try to find rooms", () => {
     createdAt: new Date(),
   });
 
-  const participantRepository = new MockParticipantRepository();
+  roomRepository.save.mockResolvedValue({
+    id: "an id",
+    title: "a title",
+    createdAt: new Date(),
+  });
+
+  const participantRepository = new MockRepository<ParticipantEntity>();
 
   participantRepository.create.mockResolvedValue({
     id: "an id",
@@ -27,8 +39,16 @@ describe("Try to find rooms", () => {
     joinedAt: new Date(),
   });
 
+  participantRepository.save.mockResolvedValue({
+    id: "an id",
+    userId: "an user id",
+    roomId: "a room id",
+    joinedAt: new Date(),
+  });
+
   const usecase = new CreateRoomUseCase(
     authProvider,
+    uuidProvider,
     roomRepository,
     participantRepository,
   );

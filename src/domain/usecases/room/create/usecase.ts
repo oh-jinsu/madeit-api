@@ -5,11 +5,13 @@ import {
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ParticipantRepository } from "src/domain/repositories/participant";
-import { RoomRepository } from "src/domain/repositories/room";
 import { AuthorizedUseCase } from "src/domain/common/authorized_usecase";
 import { AuthProvider } from "src/domain/providers/auth";
-import { ClaimModel } from "src/domain/models/claim";
+import { Repository } from "typeorm";
+import { RoomEntity } from "src/domain/entities/room";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { UuidProvider } from "src/domain/providers/uuid";
+import { InjectRepository } from "@nestjs/typeorm";
 
 export type Params = {
   readonly accessToken: string;
@@ -20,14 +22,17 @@ export type Params = {
 export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomResult> {
   constructor(
     authProvider: AuthProvider,
-    private readonly roomRepository: RoomRepository,
-    private readonly participantRepository: ParticipantRepository,
+    private readonly uuidProvider: UuidProvider,
+    @InjectRepository(RoomEntity)
+    private readonly roomRepository: Repository<RoomEntity>,
+    @InjectRepository(ParticipantEntity)
+    private readonly participantRepository: Repository<ParticipantEntity>,
   ) {
     super(authProvider);
   }
 
   protected async executeWithAuth(
-    { id: userId }: ClaimModel,
+    userId: string,
     { title }: Params,
   ): Promise<UseCaseResult<RoomResult>> {
     const titleLength = ~-encodeURI(title).split(/%..|./).length;
@@ -40,9 +45,20 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomResult> {
       return new UseCaseException(2);
     }
 
-    const room = await this.roomRepository.create(title);
+    const newRoom = this.roomRepository.create({
+      id: this.uuidProvider.v4(),
+      title,
+    });
 
-    await this.participantRepository.create(userId, room.id);
+    const room = await this.roomRepository.save(newRoom);
+
+    const newParticipant = this.participantRepository.create({
+      id: this.uuidProvider.v4(),
+      userId,
+      roomId: newRoom.id,
+    });
+
+    await this.participantRepository.save(newParticipant);
 
     return new UseCaseOk({
       id: room.id,

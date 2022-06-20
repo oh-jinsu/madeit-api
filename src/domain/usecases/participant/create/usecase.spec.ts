@@ -1,44 +1,45 @@
-import { None, Some } from "src/domain/common/enum";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { RoomEntity } from "src/domain/entities/room";
+import { UserEntity } from "src/domain/entities/user";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockParticipantRepository } from "src/infrastructure/repositories/participant/mock";
-import { MockRoomRepository } from "src/infrastructure/repositories/room/mock";
-import { MockUserRepository } from "src/infrastructure/repositories/user/mock";
+import { MockUuidProvider } from "src/infrastructure/providers/uuid/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { CreateParticipantUseCase } from "./usecase";
 
 describe("Try to create a participant", () => {
+  const uuidProvider = new MockUuidProvider();
+
+  uuidProvider.v4.mockReturnValue("an uuid");
+
   const authProvider = new MockAuthProvider();
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
   authProvider.extractClaim.mockResolvedValue({
-    id: "an id",
+    sub: "an id",
   });
 
-  const userRepository = new MockUserRepository();
+  const userRepository = new MockRepository<UserEntity>();
 
-  userRepository.findOne.mockResolvedValue(
-    new Some({
-      id: "an id",
-      name: "a name",
-      avatarId: "an avatar id",
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    }),
-  );
+  userRepository.findOne.mockResolvedValue({
+    id: "an id",
+    name: "a name",
+    avatarId: "an avatar id",
+    updatedAt: new Date(),
+    createdAt: new Date(),
+  });
 
-  const roomRepository = new MockRoomRepository();
+  const roomRepository = new MockRepository<RoomEntity>();
 
-  roomRepository.findOne.mockResolvedValue(
-    new Some({
-      id: "an id",
-      title: "a title",
-      createdAt: new Date(),
-    }),
-  );
+  roomRepository.findOne.mockResolvedValue({
+    id: "an id",
+    title: "a title",
+    createdAt: new Date(),
+  });
 
-  const participantRepository = new MockParticipantRepository();
+  const participantRepository = new MockRepository<ParticipantEntity>();
 
-  participantRepository.findOne.mockResolvedValue(new None());
+  participantRepository.findOne.mockResolvedValue(null);
 
   participantRepository.create.mockResolvedValue({
     id: "an id",
@@ -47,8 +48,16 @@ describe("Try to create a participant", () => {
     joinedAt: new Date(),
   });
 
+  participantRepository.save.mockResolvedValue({
+    id: "an id",
+    userId: "an user id",
+    roomId: "a room id",
+    joinedAt: new Date(),
+  });
+
   const usecase = new CreateParticipantUseCase(
     authProvider,
+    uuidProvider,
     userRepository,
     roomRepository,
     participantRepository,
@@ -72,7 +81,7 @@ describe("Try to create a participant", () => {
   });
 
   it("should fail for an absent user", async () => {
-    userRepository.findOne.mockResolvedValueOnce(new None());
+    userRepository.findOne.mockResolvedValueOnce(null);
 
     const params = {
       accessToken: "an access token",
@@ -89,7 +98,7 @@ describe("Try to create a participant", () => {
   });
 
   it("should fail for an absent room", async () => {
-    roomRepository.findOne.mockResolvedValueOnce(new None());
+    roomRepository.findOne.mockResolvedValueOnce(null);
 
     const params = {
       accessToken: "an access token",
@@ -106,14 +115,12 @@ describe("Try to create a participant", () => {
   });
 
   it("should fail for an absent room", async () => {
-    participantRepository.findOne.mockResolvedValueOnce(
-      new Some({
-        id: "an id",
-        userId: "an user id",
-        roomId: "a room id",
-        joinedAt: new Date(),
-      }),
-    );
+    participantRepository.findOne.mockResolvedValueOnce({
+      id: "an id",
+      userId: "an user id",
+      roomId: "a room id",
+      joinedAt: new Date(),
+    });
 
     const params = {
       accessToken: "an access token",

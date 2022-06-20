@@ -1,14 +1,15 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { AuthorizedUseCase } from "src/domain/common/authorized_usecase";
 import {
   UseCaseException,
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
-import { AuthRepository } from "src/domain/repositories/auth";
 import { NothingResult } from "src/domain/results/common/nothing";
+import { AuthEntity } from "src/domain/entities/auth";
+import { Repository } from "typeorm";
 
 export type Params = {
   readonly accessToken: string;
@@ -18,21 +19,22 @@ export type Params = {
 export class SignOutUseCase extends AuthorizedUseCase<Params, NothingResult> {
   constructor(
     authProvider: AuthProvider,
-    private readonly authRepository: AuthRepository,
+    @InjectRepository(AuthEntity)
+    private readonly authRepository: Repository<AuthEntity>,
   ) {
     super(authProvider);
   }
 
-  protected async executeWithAuth({
-    id,
-  }: ClaimModel): Promise<UseCaseResult<NothingResult>> {
-    const option = await this.authRepository.findOne(id);
+  protected async executeWithAuth(
+    id: string,
+  ): Promise<UseCaseResult<NothingResult>> {
+    const option = await this.authRepository.findOne({ where: { id } });
 
-    if (!option.isSome()) {
+    if (!option) {
       return new UseCaseException(1);
     }
 
-    const { refreshToken } = option.value;
+    const { refreshToken } = option;
 
     if (!refreshToken) {
       return new UseCaseException(2);

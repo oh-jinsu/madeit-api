@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { OAuth2Client } from "google-auth-library";
-import { GoogleClaimModel } from "src/domain/models/google_claim";
 import { GoogleAuthProvider } from "src/domain/providers/google_auth";
 
 @Injectable()
@@ -23,7 +22,7 @@ export class GoogleAuthProviderImpl implements GoogleAuthProvider {
     }
   }
 
-  async extractClaim(idToken: string): Promise<GoogleClaimModel> {
+  async extractClaim(idToken: string): Promise<Record<string, any>> {
     const ticket = await this.client.verifyIdToken({
       idToken,
       audience: [
@@ -32,11 +31,6 @@ export class GoogleAuthProviderImpl implements GoogleAuthProvider {
       ],
     });
 
-    const { sub: id, email } = ticket.getPayload();
-
-    return {
-      id,
-      email,
-    };
+    return ticket.getPayload();
   }
 }

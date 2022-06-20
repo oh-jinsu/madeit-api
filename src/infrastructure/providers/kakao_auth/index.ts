@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AppleAuthProvider } from "src/domain/providers/apple_auth";
 import * as NodeRSA from "node-rsa";
-import { AppleClaimModel } from "src/domain/models/apple_claim";
 
 @Injectable()
 export class KakaoAuthProviderImpl implements AppleAuthProvider {
@@ -61,15 +60,9 @@ export class KakaoAuthProviderImpl implements AppleAuthProvider {
     }
   }
 
-  async extractClaim(idToken: string): Promise<AppleClaimModel> {
-    const payload = this.jwtService.decode(idToken, {
+  async extractClaim(idToken: string): Promise<Record<string, any>> {
+    return this.jwtService.decode(idToken, {
       json: true,
     }) as Record<string, any>;
-
-    const { sub: id } = payload;
-
-    return {
-      id,
-    };
   }
 }

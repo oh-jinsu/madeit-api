@@ -1,22 +1,22 @@
-import { MockParticipantRepository } from "src/infrastructure/repositories/participant/mock";
-import { MockRoomRepository } from "src/infrastructure/repositories/room/mock";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { RoomEntity } from "src/domain/entities/room";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { FindRoomsUseCase } from "./usecase";
 
 describe("Try to find rooms", () => {
-  const roomRepository = new MockRoomRepository();
+  const roomRepository = new MockRepository<RoomEntity>();
 
-  roomRepository.find.mockResolvedValue({
-    next: "a next",
-    items: [...Array(10)].map((_, i) => ({
+  roomRepository.find.mockResolvedValue(
+    [...Array(10)].map((_, i) => ({
       id: `id ${i}`,
       title: "a title",
       createdAt: new Date(),
     })),
-  });
+  );
 
-  const participantRepository = new MockParticipantRepository();
+  const participantRepository = new MockRepository<ParticipantEntity>();
 
-  participantRepository.countByRoomId.mockResolvedValue(10);
+  participantRepository.count.mockResolvedValue(10);
 
   const usecase = new FindRoomsUseCase(roomRepository, participantRepository);
 
@@ -27,7 +27,6 @@ describe("Try to find rooms", () => {
       fail();
     }
 
-    expect(result.value.next).toBeDefined();
     expect(result.value.items.length).toBe(10);
   });
 });

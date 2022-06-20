@@ -1,7 +1,7 @@
-import { Some } from "src/domain/common/enum";
+import { ParticipantEntity } from "src/domain/entities/participant";
+import { RoomEntity } from "src/domain/entities/room";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockParticipantRepository } from "src/infrastructure/repositories/participant/mock";
-import { MockRoomRepository } from "src/infrastructure/repositories/room/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { FindMyRoomsUsecase } from "./usecase";
 
 describe("Try to find my rooms", () => {
@@ -9,11 +9,11 @@ describe("Try to find my rooms", () => {
 
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+  authProvider.extractClaim.mockResolvedValue({ sub: "an id" });
 
-  const participantRepository = new MockParticipantRepository();
+  const participantRepository = new MockRepository<ParticipantEntity>();
 
-  participantRepository.findByUserId.mockResolvedValue(
+  participantRepository.find.mockResolvedValue(
     [...Array(10)].map(() => ({
       id: "an id",
       userId: "a user id",
@@ -22,22 +22,20 @@ describe("Try to find my rooms", () => {
     })),
   );
 
-  participantRepository.countByRoomId.mockResolvedValue(10);
+  participantRepository.count.mockResolvedValue(10);
 
-  const roomRepository = new MockRoomRepository();
+  const roomRepository = new MockRepository<RoomEntity>();
 
-  roomRepository.findOne.mockResolvedValue(
-    new Some({
-      id: "an id",
-      title: "a title",
-      createdAt: new Date(),
-    }),
-  );
+  roomRepository.findOne.mockResolvedValue({
+    id: "an id",
+    title: "a title",
+    createdAt: new Date(),
+  });
 
   const usecase = new FindMyRoomsUsecase(
     authProvider,
-    participantRepository,
     roomRepository,
+    participantRepository,
   );
 
   it("should fail for an invalid access token", async () => {

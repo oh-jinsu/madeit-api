@@ -1,6 +1,6 @@
-import { None, Some } from "src/domain/common/enum";
+import { ParticipantEntity } from "src/domain/entities/participant";
 import { MockAuthProvider } from "src/infrastructure/providers/auth/mock";
-import { MockParticipantRepository } from "src/infrastructure/repositories/participant/mock";
+import { MockRepository } from "src/infrastructure/repositories/mock";
 import { DeleteParticipantUseCase } from "./usecase";
 
 describe("Try to create a participant", () => {
@@ -9,19 +9,17 @@ describe("Try to create a participant", () => {
   authProvider.verifyAccessToken.mockResolvedValue(true);
 
   authProvider.extractClaim.mockResolvedValue({
-    id: "an id",
+    sub: "an id",
   });
 
-  const participantRepository = new MockParticipantRepository();
+  const participantRepository = new MockRepository<ParticipantEntity>();
 
-  participantRepository.findOne.mockResolvedValue(
-    new Some({
-      id: "an id",
-      userId: "an user id",
-      roomId: "a room id",
-      joinedAt: new Date(),
-    }),
-  );
+  participantRepository.findOne.mockResolvedValue({
+    id: "an id",
+    userId: "an user id",
+    roomId: "a room id",
+    joinedAt: new Date(),
+  });
 
   participantRepository.delete.mockResolvedValue(null);
 
@@ -48,7 +46,7 @@ describe("Try to create a participant", () => {
   });
 
   it("should fail for an absent participant", async () => {
-    participantRepository.findOne.mockResolvedValueOnce(new None());
+    participantRepository.findOne.mockResolvedValueOnce(null);
 
     const params = {
       accessToken: "an access token",

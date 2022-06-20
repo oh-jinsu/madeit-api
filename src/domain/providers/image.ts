@@ -1,3 +1,3 @@
 export abstract class ImageProvider {
-  abstract getPublicImageUri(id: string): Promise<string>;
+  abstract resize(buffer: Buffer, size: number): Promise<Buffer>;
 }

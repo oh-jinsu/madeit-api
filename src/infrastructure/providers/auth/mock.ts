@@ -1,4 +1,3 @@
-import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider, IssueTokenOptions } from "src/domain/providers/auth";
 
 export class MockAuthProvider implements AuthProvider {
@@ -10,5 +9,5 @@ export class MockAuthProvider implements AuthProvider {
 
   verifyRefreshToken = jest.fn<Promise<boolean>, [string]>();
 
-  extractClaim = jest.fn<Promise<ClaimModel>, [string]>();
+  extractClaim = jest.fn<Promise<Record<string, any>>, [string]>();
 }

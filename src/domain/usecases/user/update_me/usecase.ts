@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { AuthorizedUseCase } from "src/domain/common/authorized_usecase";
 import {
   RemovePropertyParam,
@@ -9,10 +10,10 @@ import {
   UseCaseOk,
   UseCaseResult,
 } from "src/domain/common/usecase_result";
-import { ClaimModel } from "src/domain/models/claim";
 import { AuthProvider } from "src/domain/providers/auth";
-import { UserRepository } from "src/domain/repositories/user";
 import { UserResult } from "src/domain/results/user";
+import { UserEntity } from "src/domain/entities/user";
+import { Repository } from "typeorm";
 
 export type UpdateNameDto = {
   readonly path: "/name";
@@ -37,36 +38,41 @@ export type Params = {
 export class UpdateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
   constructor(
     authProvider: AuthProvider,
-    private readonly userRepository: UserRepository,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {
     super(authProvider);
   }
 
   protected async executeWithAuth(
-    { id: userId }: ClaimModel,
+    id: string,
     { dtos }: Params,
   ): Promise<UseCaseResult<UserResult>> {
-    const option = await this.userRepository.findOne(userId);
+    const option = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
 
-    if (option.isNone()) {
+    if (!option) {
       return new UseCaseException(1);
     }
 
     await Promise.all(
       dtos.map((dto) => {
         if (dto.path == "/name") {
-          return this.userRepository.update(userId, {
+          return this.userRepository.update(id, {
             name: dto.value,
           });
         }
 
         if (dto.path == "/email") {
           if (dto.op == "remove") {
-            return this.userRepository.update(userId, {
+            return this.userRepository.update(id, {
               email: null,
             });
           } else {
-            return this.userRepository.update(userId, {
+            return this.userRepository.update(id, {
               email: dto.value,
             });
           }
@@ -74,11 +80,11 @@ export class UpdateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
 
         if (dto.path === "/avatar_id") {
           if (dto.op == "remove") {
-            return this.userRepository.update(userId, {
+            return this.userRepository.update(id, {
               avatarId: null,
             });
           } else {
-            return this.userRepository.update(userId, {
+            return this.userRepository.update(id, {
               avatarId: dto.value,
             });
           }
@@ -86,13 +92,15 @@ export class UpdateMeUseCase extends AuthorizedUseCase<Params, UserResult> {
       }),
     );
 
-    const userOption = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
 
-    if (!userOption.isSome()) {
+    if (!user) {
       return new UseCaseException(2);
     }
-
-    const user = userOption.value;
 
     return new UseCaseOk({
       id: user.id,

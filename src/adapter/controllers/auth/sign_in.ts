@@ -5,7 +5,7 @@ import {
   AbstractController,
   ExceptionResponse,
 } from "src/adapter/common/adapter";
-import { SignInUseCase } from "src/domain/usecases/auth/signin/usecase";
+import { SignInUseCase } from "src/domain/usecases/auth/sign_in/usecase";
 
 export class RequestBody {
   @IsString()

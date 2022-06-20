@@ -1,14 +1,21 @@
 import { Body, Controller, Post, Query } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString } from "class-validator";
 import {
   AbstractController,
   ExceptionResponse,
 } from "src/adapter/common/adapter";
-import { SignUpUseCase } from "src/domain/usecases/auth/signup/usecase";
+import { SignUpUseCase } from "src/domain/usecases/auth/sign_up/usecase";
 export class RequestBody {
   @IsString()
   id_token: string;
+
+  @IsString()
+  name: string;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
 }
 
 @Throttle(1, 0.1)
@@ -21,9 +28,14 @@ export class SignUpController extends AbstractController {
   @Post()
   async receive(
     @Query("provider") provider: "apple" | "google" | "kakao",
-    @Body() { id_token: idToken }: RequestBody,
+    @Body() { id_token: idToken, name, email }: RequestBody,
   ) {
-    const result = await this.usecase.execute({ provider, idToken });
+    const result = await this.usecase.execute({
+      provider,
+      idToken,
+      name,
+      email,
+    });
 
     return this.response(result);
   }
@@ -39,6 +51,21 @@ export class SignUpController extends AbstractController {
         return {
           status: 404,
           message: "이미 가입한 이용자입니다.",
+        };
+      case 3:
+        return {
+          status: 409,
+          message: "이미 등록된 이용자입니다.",
+        };
+      case 4:
+        return {
+          status: 400,
+          message: "이름은 2글자 이상이어야 합니다.",
+        };
+      case 5:
+        return {
+          status: 400,
+          message: "이름은 8글자 이하여야 합니다.",
         };
     }
   }

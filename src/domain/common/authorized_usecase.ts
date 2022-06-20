@@ -1,4 +1,3 @@
-import { ClaimModel } from "../models/claim";
 import { AuthProvider } from "../providers/auth";
 import { UseCase } from "./usecase";
 import { UseCaseException, UseCaseResult } from "./usecase_result";
@@ -21,13 +20,13 @@ export abstract class AuthorizedUseCase<T extends AuthorizedUseCaseParams, K>
       return new UseCaseException(102);
     }
 
-    const claim = await this.authProvider.extractClaim(accessToken);
+    const { sub } = await this.authProvider.extractClaim(accessToken);
 
-    return this.executeWithAuth(claim, params);
+    return this.executeWithAuth(sub, params);
   }
 
   protected abstract executeWithAuth(
-    claim: ClaimModel,
+    id: string,
     params: T,
   ): Promise<UseCaseResult<K>>;
 }
