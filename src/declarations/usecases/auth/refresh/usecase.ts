@@ -31,11 +31,16 @@ export class RefreshAuthUseCase implements UseCase<Params, Model> {
   async execute({ refreshToken }: Params): Promise<UseCaseResult<Model>> {
     const isVerified = await this.authProvider.verifyRefreshToken(refreshToken);
 
+    console.log("A");
     if (!isVerified) {
       return new UseCaseException(1);
     }
 
-    const { id } = await this.authProvider.extractClaim(refreshToken);
+    const { sub: id } = await this.authProvider.extractClaim(refreshToken);
+
+    if (!id) {
+      return new UseCaseException(1);
+    }
 
     const auth = await this.authRepository.findOne({ where: { id } });
 

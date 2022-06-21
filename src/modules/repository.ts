@@ -37,7 +37,7 @@ import { FileRepositoryImpl } from "src/implementations/repositories/file";
           ChatPhotologEntity,
         ],
         synchronize: true,
-        dropSchema: Boolean(process.env.DROP_SCHEME),
+        dropSchema: process.env.DROP_SCHEME === "true",
       }),
     }),
   ],
