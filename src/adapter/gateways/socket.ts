@@ -24,10 +24,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(client: Socket) {
-    const accessToken = client.handshake.url
-      .split("&")
-      .find((query) => query.includes("token="))
-      ?.replace("token=", "");
+    const accessToken = client.handshake.query["token"] as string;
 
     if (!accessToken) {
       return client.disconnect();
@@ -48,6 +45,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     await client.join(rooms.value.map(({ id }) => id));
+
+    client.emit("connected-with-auth", {});
   }
 
   handleDisconnect(client: Socket) {

@@ -7,6 +7,10 @@ export type ExceptionResponse = {
 };
 
 export abstract class AbstractController {
+  constructor() {
+    this.mapSnakeCase = this.mapSnakeCase.bind(this);
+  }
+
   response<T>(result: UseCaseResult<T>): { [key: string]: any } {
     if (result.isException()) {
       const { code } = result;
@@ -23,19 +27,19 @@ export abstract class AbstractController {
     }
 
     if (result.isOk()) {
-      return AbstractController.mapSnakeCase(result.value);
+      return this.mapSnakeCase(result.value);
     }
 
     throw Error();
   }
 
-  private static mapSnakeCase(value: any): any {
+  protected mapSnakeCase(value: any): any {
     if (value === null || value === undefined) {
       return null;
     }
 
     if (Array.isArray(value)) {
-      return value.map(AbstractController.mapSnakeCase);
+      return value.map(this.mapSnakeCase);
     }
 
     if (value.constructor === Object) {
@@ -46,7 +50,7 @@ export abstract class AbstractController {
           return `_${substring.toLowerCase()}`;
         });
 
-        result[mappedKey] = AbstractController.mapSnakeCase(value);
+        result[mappedKey] = this.mapSnakeCase(value);
       });
 
       return result;

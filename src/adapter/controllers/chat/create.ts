@@ -120,7 +120,7 @@ export class CreateChatController extends AbstractController {
     if (result.isOk()) {
       this.socketGateway
         .getRoom(result.value.roomId)
-        .emit("chat-created", result);
+        .emit("chat-created", this.mapSnakeCase(result.value));
     }
 
     return this.response(result);

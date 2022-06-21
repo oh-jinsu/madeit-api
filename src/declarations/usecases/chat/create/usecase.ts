@@ -62,13 +62,13 @@ export class CreateChatUseCase extends AuthorizedUseCase<Params, ChatModel> {
     userId: string,
     { roomId, ...params }: Params,
   ): Promise<UseCaseResult<ChatModel>> {
-    const user = await this.userRepository.findOne({
+    const userEntity = await this.userRepository.findOne({
       where: {
         id: userId,
       },
     });
 
-    if (!user) {
+    if (!userEntity) {
       return new UseCaseException(1);
     }
 
@@ -82,6 +82,15 @@ export class CreateChatUseCase extends AuthorizedUseCase<Params, ChatModel> {
     if (!participant) {
       return new UseCaseException(2);
     }
+
+    const user = {
+      id: userEntity.id,
+      name: userEntity.name,
+      email: userEntity.email,
+      avatarId: userEntity.avatarId,
+      updatedAt: userEntity.updatedAt,
+      createdAt: userEntity.createdAt,
+    };
 
     switch (params.type) {
       case "message": {
@@ -149,7 +158,7 @@ export class CreateChatUseCase extends AuthorizedUseCase<Params, ChatModel> {
         return new UseCaseOk({
           id: chatId,
           roomId,
-          user,
+          user: userEntity,
           type,
           imageIds,
           createdAt,
@@ -206,7 +215,7 @@ export class CreateChatUseCase extends AuthorizedUseCase<Params, ChatModel> {
         return new UseCaseOk({
           id: chatId,
           roomId,
-          user,
+          user: userEntity,
           type,
           message,
           imageIds,
