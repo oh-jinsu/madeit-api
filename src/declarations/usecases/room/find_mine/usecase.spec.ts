@@ -1,3 +1,7 @@
+import { ChatEntity } from "src/declarations/entities/chat";
+import { ChatImageEntity } from "src/declarations/entities/chat/image";
+import { ChatMessageEntity } from "src/declarations/entities/chat/message";
+import { ChatPhotologEntity } from "src/declarations/entities/chat/photolog";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { PerformanceEntity } from "src/declarations/entities/performance";
 import { RoomEntity } from "src/declarations/entities/room";
@@ -63,12 +67,61 @@ describe("Try to find my rooms", () => {
     createdAt: new Date(),
   });
 
+  const chatRepository = new MockRepository<ChatEntity>();
+
+  chatRepository.find.mockResolvedValue(
+    [...Array(10)].map((_, i) => ({
+      id: "id",
+      roomId: "room id",
+      userId: "user id",
+      type: (() => {
+        switch (i % 3) {
+          case 1:
+            return "message";
+          case 2:
+            return "image";
+          default:
+            return "photolog";
+        }
+      })(),
+      createdAt: new Date(),
+    })),
+  );
+
+  const chatMessageRepository = new MockRepository<ChatMessageEntity>();
+
+  chatMessageRepository.findOne.mockResolvedValue({
+    chatId: "chat id",
+    message: "message",
+  });
+
+  const chatImageRepository = new MockRepository<ChatImageEntity>();
+
+  chatImageRepository.find.mockResolvedValue(
+    [...Array(3)].map(() => ({
+      id: "id",
+      chatId: "chat id",
+      imageId: "image id",
+    })),
+  );
+
+  const chatPhotologRepository = new MockRepository<ChatPhotologEntity>();
+
+  chatPhotologRepository.findOne.mockResolvedValue({
+    chatId: "chat id",
+    isChecked: false,
+  });
+
   const usecase = new FindMyRoomsUsecase(
     authProvider,
     roomRepository,
     performanceRepository,
     participantRepository,
     userRepository,
+    chatRepository,
+    chatMessageRepository,
+    chatImageRepository,
+    chatPhotologRepository,
   );
 
   it("should fail for an invalid access token", async () => {

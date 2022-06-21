@@ -12,6 +12,10 @@ import { Repository } from "typeorm";
 import { PerformanceEntity } from "src/declarations/entities/performance";
 import { UserEntity } from "src/declarations/entities/user";
 import { MyRoomModel } from "src/declarations/models/room/mine";
+import { ChatEntity } from "src/declarations/entities/chat";
+import { ChatMessageEntity } from "src/declarations/entities/chat/message";
+import { ChatImageEntity } from "src/declarations/entities/chat/image";
+import { ChatPhotologEntity } from "src/declarations/entities/chat/photolog";
 
 export type Params = {
   readonly accessToken: string;
@@ -32,6 +36,14 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
     private readonly participantRepository: Repository<ParticipantEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(ChatEntity)
+    private readonly chatRepository: Repository<ChatEntity>,
+    @InjectRepository(ChatMessageEntity)
+    private readonly chatMessageRepository: Repository<ChatMessageEntity>,
+    @InjectRepository(ChatImageEntity)
+    private readonly chatImageRepository: Repository<ChatImageEntity>,
+    @InjectRepository(ChatPhotologEntity)
+    private readonly chatPhotologRepository: Repository<ChatPhotologEntity>,
   ) {
     super(authProvider);
   }
@@ -62,30 +74,43 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
           },
         });
 
-        const [participantCount, owner, performances, myPerformances] =
-          await Promise.all([
-            this.participantRepository.count({
-              where: {
-                roomId: id,
-              },
-            }),
-            this.userRepository.findOne({
-              where: {
-                id: ownerId,
-              },
-            }),
-            this.performanceRepository.find({
-              where: {
-                roomId: id,
-              },
-            }),
-            this.performanceRepository.find({
-              where: {
-                roomId: id,
-                userId,
-              },
-            }),
-          ]);
+        const [
+          participantCount,
+          owner,
+          performances,
+          myPerformances,
+          lastChatEntity,
+        ] = await Promise.all([
+          this.participantRepository.count({
+            where: {
+              roomId: id,
+            },
+          }),
+          this.userRepository.findOne({
+            where: {
+              id: ownerId,
+            },
+          }),
+          this.performanceRepository.find({
+            where: {
+              roomId: id,
+            },
+          }),
+          this.performanceRepository.find({
+            where: {
+              roomId: id,
+              userId,
+            },
+          }),
+          this.chatRepository.findOne({
+            where: {
+              roomId,
+            },
+            order: {
+              createdAt: "DESC",
+            },
+          }),
+        ]);
 
         const performanceValue =
           performances.length === 0
@@ -98,6 +123,95 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
             ? -1
             : myPerformances.reduce((prev, curr) => prev + curr.value, 0) /
               myPerformances.length;
+
+        const lastChat = await (async () => {
+          if (!lastChatEntity) {
+            return null;
+          }
+
+          const userEntity = await this.userRepository.findOne({
+            where: {
+              id: lastChatEntity.userId,
+            },
+          });
+
+          const user = {
+            id: userEntity.id,
+            name: userEntity.name,
+            email: userEntity.email,
+            avatarId: userEntity.avatarId,
+            updatedAt: userEntity.updatedAt,
+            createdAt: userEntity.createdAt,
+          };
+
+          const common = {
+            id: lastChatEntity.id,
+            roomId: lastChatEntity.roomId,
+            user,
+            createdAt: lastChatEntity.createdAt,
+          };
+
+          switch (lastChatEntity.type) {
+            case "message": {
+              const { message } = await this.chatMessageRepository.findOne({
+                where: {
+                  chatId: lastChatEntity.id,
+                },
+              });
+
+              return {
+                type: lastChatEntity.type,
+                message,
+                ...common,
+              };
+            }
+            case "image": {
+              const chatImages = await this.chatImageRepository.find({
+                where: {
+                  chatId: lastChatEntity.id,
+                },
+              });
+
+              const imageIds = chatImages.map(({ imageId }) => imageId);
+
+              return {
+                type: lastChatEntity.type,
+                imageIds,
+                ...common,
+              };
+            }
+            case "photolog": {
+              const { message } = await this.chatMessageRepository.findOne({
+                where: {
+                  chatId: lastChatEntity.id,
+                },
+              });
+
+              const chatImages = await this.chatImageRepository.find({
+                where: {
+                  chatId: lastChatEntity.id,
+                },
+              });
+
+              const imageIds = chatImages.map(({ imageId }) => imageId);
+
+              const { isChecked } = await this.chatPhotologRepository.findOne({
+                where: {
+                  chatId: lastChatEntity.id,
+                },
+              });
+
+              return {
+                type: lastChatEntity.type,
+
+                message,
+                imageIds,
+                isChecked,
+                ...common,
+              };
+            }
+          }
+        })();
 
         return {
           id,
@@ -121,6 +235,7 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
             value: myPerformanceValue,
             symbol: goalSymbol,
           },
+          lastChat,
           participantCount,
           maxParticipant,
           createdAt,

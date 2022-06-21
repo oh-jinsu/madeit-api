@@ -9,7 +9,7 @@ describe("Try to refresh", () => {
 
   authProvider.verifyRefreshToken.mockResolvedValue(true);
 
-  authProvider.extractClaim.mockResolvedValue({ id: "an id" });
+  authProvider.extractClaim.mockResolvedValue({ sub: "an id" });
 
   const hashProvider = new MockHashProvider();
 
