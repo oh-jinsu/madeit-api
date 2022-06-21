@@ -1,4 +1,10 @@
-import { Body, Controller, Post, Query } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  Query,
+} from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { IsEmail, IsOptional, IsString } from "class-validator";
 import {
@@ -30,6 +36,10 @@ export class SignUpController extends AbstractController {
     @Query("provider") provider: "apple" | "google" | "kakao",
     @Body() { id_token: idToken, name, email }: RequestBody,
   ) {
+    if (provider !== "apple" && provider !== "google" && provider !== "kakao") {
+      throw new BadRequestException();
+    }
+
     const result = await this.usecase.execute({
       provider,
       idToken,

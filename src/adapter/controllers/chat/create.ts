@@ -1,6 +1,5 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { IsString } from "class-validator";
 import {
   AbstractController,
   ExceptionResponse,
@@ -9,34 +8,26 @@ import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase";
 
 export class MessageTypeRequestBody {
-  @IsString()
   type: "message";
 
-  @IsString()
   message: string;
 }
 
 export class ImageTypeRequestBody {
-  @IsString()
   type: "image";
 
-  @IsString({ each: true })
   image_ids: string[];
 }
 
 export class PhotologTypeRequestBody {
-  @IsString()
   type: "photolog";
 
-  @IsString()
   message: string;
 
-  @IsString({ each: true })
   image_ids: string[];
 }
 
 export class DefaultRequestBody {
-  @IsString()
   room_id: string;
 }
 
@@ -57,29 +48,69 @@ export class CreateChatController extends AbstractController {
     }: DefaultRequestBody &
       (MessageTypeRequestBody | ImageTypeRequestBody | PhotologTypeRequestBody),
   ) {
+    if (typeof roomId !== "string") {
+      throw new BadRequestException();
+    }
+
+    if ("message" in body) {
+      if (typeof body.message !== "string") {
+        throw new BadRequestException();
+      }
+    }
+
+    if ("image_ids" in body) {
+      if (!Array.isArray(body.image_ids)) {
+        throw new BadRequestException();
+      }
+
+      if (body.image_ids.some((e) => typeof e !== "string")) {
+        throw new BadRequestException();
+      }
+    }
+
+    const params = (() => {
+      switch (body.type) {
+        case "message":
+          if (!body.message) {
+            throw new BadRequestException();
+          }
+
+          return {
+            type: body.type,
+            message: body.message,
+          };
+        case "image":
+          if (!body.image_ids) {
+            throw new BadRequestException();
+          }
+
+          return {
+            type: body.type,
+            imageIds: body.image_ids,
+          };
+        case "photolog":
+          if (!body.message) {
+            throw new BadRequestException();
+          }
+
+          if (!body.image_ids) {
+            throw new BadRequestException();
+          }
+
+          return {
+            type: body.type,
+            message: body.message,
+            imageIds: body.image_ids,
+          };
+        default:
+          throw new BadRequestException();
+      }
+    })();
+
     const result = await this.usecase.execute({
       accessToken,
       roomId,
-      ...(() => {
-        switch (body.type) {
-          case "message":
-            return {
-              type: body.type,
-              message: body.message,
-            };
-          case "image":
-            return {
-              type: body.type,
-              imageIds: body.image_ids,
-            };
-          case "photolog":
-            return {
-              type: body.type,
-              message: body.message,
-              imageIds: body.image_ids,
-            };
-        }
-      })(),
+      ...params,
     });
 
     return this.response(result);

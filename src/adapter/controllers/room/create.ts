@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { IsString } from "class-validator";
 import {
@@ -44,6 +44,15 @@ export class CreateRoomController extends AbstractController {
       goal_symbol: goalSymbol,
     }: RequestBody,
   ) {
+    if (
+      goalType !== "done" &&
+      goalType !== "number" &&
+      goalType !== "time" &&
+      goalType !== "duration"
+    ) {
+      throw new BadRequestException();
+    }
+
     const result = await this.usecase.execute({
       accessToken,
       description,

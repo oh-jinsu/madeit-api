@@ -19,9 +19,19 @@ export class FindChatsController extends AbstractController {
     @BearerToken() accessToken: string,
     @Query("room_id") roomId: string,
     @Query("cursor") cursor?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limitString?: string,
   ) {
-    if (!roomId) {
+    if (typeof roomId !== "string") {
+      throw new BadRequestException();
+    }
+
+    if (cursor && typeof cursor !== "string") {
+      throw new BadRequestException();
+    }
+
+    const limit = Number(limitString);
+
+    if (limitString && Number.isNaN(limit)) {
       throw new BadRequestException();
     }
 
@@ -29,7 +39,7 @@ export class FindChatsController extends AbstractController {
       accessToken,
       roomId,
       cursor,
-      limit: Number(limit),
+      limit,
     });
 
     return this.response(result);

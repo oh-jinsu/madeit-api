@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Post,
   UploadedFile,
@@ -22,8 +23,14 @@ export class UploadImageController extends AbstractController {
   @UseInterceptors(FileInterceptor("file"))
   async receive(
     @BearerToken() accessToken: string,
-    @UploadedFile() { buffer, mimetype }: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ) {
+    if (!file) {
+      throw new BadRequestException();
+    }
+
+    const { buffer, mimetype } = file;
+
     const result = await this.usecase.execute({
       accessToken,
       buffer,
