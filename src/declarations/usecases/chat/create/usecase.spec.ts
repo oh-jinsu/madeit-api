@@ -71,7 +71,7 @@ describe("Try to create chat", () => {
 
   chatPhotologRepository.save.mockResolvedValue({
     chatId: "chat id",
-    isChekced: false,
+    isChecked: false,
   });
 
   const usecase = new CreateChatUseCase(

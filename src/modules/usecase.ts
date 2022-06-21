@@ -25,6 +25,7 @@ import { ChatEntity } from "src/declarations/entities/chat";
 import { ChatMessageEntity } from "src/declarations/entities/chat/message";
 import { ChatImageEntity } from "src/declarations/entities/chat/image";
 import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase";
+import { FindChatsUseCase } from "src/declarations/usecases/chat/find/usecase";
 
 @Global()
 @Module({
@@ -60,6 +61,7 @@ import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase
     CreateParticipantUseCase,
     DeleteParticipantUseCase,
     // Participant Module
+    FindChatsUseCase,
     CreateChatUseCase,
     // Chat Module
     UploadImageUseCase,
@@ -83,6 +85,7 @@ import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase
     CreateParticipantUseCase,
     DeleteParticipantUseCase,
     // Participant Module
+    FindChatsUseCase,
     CreateChatUseCase,
     // Chat Module
     UploadImageUseCase,

@@ -5,6 +5,7 @@ import { SignInController } from "src/adapter/controllers/auth/sign_in";
 import { SignOutController } from "src/adapter/controllers/auth/sign_out";
 import { SignUpController } from "src/adapter/controllers/auth/sign_up";
 import { CreateChatController } from "src/adapter/controllers/chat/create";
+import { FindChatsController } from "src/adapter/controllers/chat/find";
 import { UploadImageController } from "src/adapter/controllers/image/upload";
 import { CreateParticipantController } from "src/adapter/controllers/participant/create";
 import { DeleteParticipantController } from "src/adapter/controllers/participant/delete";
@@ -34,6 +35,7 @@ import { SocketGateway } from "src/adapter/gateways/socket";
     CreateParticipantController,
     DeleteParticipantController,
     // Participant Module
+    FindChatsController,
     CreateChatController,
     // Chat Module
     UploadImageController,
