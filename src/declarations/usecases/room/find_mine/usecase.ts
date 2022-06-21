@@ -6,19 +6,22 @@ import {
   UseCaseResult,
 } from "src/declarations/common/usecase_result";
 import { AuthProvider } from "src/declarations/providers/auth";
-import { RoomModel } from "src/declarations/models/room";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { RoomEntity } from "src/declarations/entities/room";
 import { Repository } from "typeorm";
 import { PerformanceEntity } from "src/declarations/entities/performance";
 import { UserEntity } from "src/declarations/entities/user";
+import { MyRoomModel } from "src/declarations/models/room/mine";
 
 export type Params = {
   readonly accessToken: string;
 };
 
 @Injectable()
-export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
+export class FindMyRoomsUsecase extends AuthorizedUseCase<
+  Params,
+  MyRoomModel[]
+> {
   constructor(
     authProvider: AuthProvider,
     @InjectRepository(RoomEntity)
@@ -35,7 +38,7 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
 
   protected async executeWithAuth(
     userId: string,
-  ): Promise<UseCaseResult<RoomModel[]>> {
+  ): Promise<UseCaseResult<MyRoomModel[]>> {
     const participants = await this.participantRepository.find({
       where: {
         userId,
@@ -59,29 +62,42 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
           },
         });
 
-        const [participantCount, owner, performances] = await Promise.all([
-          this.participantRepository.count({
-            where: {
-              roomId: id,
-            },
-          }),
-          this.userRepository.findOne({
-            where: {
-              id: ownerId,
-            },
-          }),
-          this.performanceRepository.find({
-            where: {
-              roomId: id,
-            },
-          }),
-        ]);
+        const [participantCount, owner, performances, myPerformances] =
+          await Promise.all([
+            this.participantRepository.count({
+              where: {
+                roomId: id,
+              },
+            }),
+            this.userRepository.findOne({
+              where: {
+                id: ownerId,
+              },
+            }),
+            this.performanceRepository.find({
+              where: {
+                roomId: id,
+              },
+            }),
+            this.performanceRepository.find({
+              where: {
+                roomId: id,
+                userId,
+              },
+            }),
+          ]);
 
         const performanceValue =
           performances.length === 0
             ? -1
             : performances.reduce((prev, curr) => prev + curr.value, 0) /
               performances.length;
+
+        const myPerformanceValue =
+          myPerformances.length === 0
+            ? -1
+            : myPerformances.reduce((prev, curr) => prev + curr.value, 0) /
+              myPerformances.length;
 
         return {
           id,
@@ -98,6 +114,11 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
           performance: {
             label: goalLabel,
             value: performanceValue,
+            symbol: goalSymbol,
+          },
+          myPerformance: {
+            label: goalLabel,
+            value: myPerformanceValue,
             symbol: goalSymbol,
           },
           participantCount,
