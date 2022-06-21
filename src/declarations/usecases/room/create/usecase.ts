@@ -21,6 +21,7 @@ export type Params = {
   readonly goalLabel: string;
   readonly goalType: "done" | "number" | "time" | "duration";
   readonly goalSymbol: string;
+  readonly maxParticipant: number;
 };
 
 @Injectable()
@@ -40,7 +41,14 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomModel> {
 
   protected async executeWithAuth(
     userId: string,
-    { title, description, goalLabel, goalSymbol, goalType }: Params,
+    {
+      title,
+      description,
+      goalLabel,
+      goalSymbol,
+      goalType,
+      maxParticipant,
+    }: Params,
   ): Promise<UseCaseResult<RoomModel>> {
     const owner = await this.userRepository.findOne({
       where: {
@@ -62,14 +70,19 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomModel> {
       return new UseCaseException(3);
     }
 
+    if (maxParticipant < 2) {
+      return new UseCaseException(4);
+    }
+
     const newRoom = this.roomRepository.create({
       id: this.uuidProvider.generate(),
       ownerId: userId,
       title,
       description,
-      goalLabel: goalLabel,
-      goalType: goalType,
-      goalSymbol: goalSymbol,
+      goalLabel,
+      goalType,
+      goalSymbol,
+      maxParticipant,
     });
 
     const room = await this.roomRepository.save(newRoom);
@@ -100,6 +113,7 @@ export class CreateRoomUseCase extends AuthorizedUseCase<Params, RoomModel> {
         symbol: goalSymbol,
       },
       participantCount: 1,
+      maxParticipant: room.maxParticipant,
       createdAt: room.createdAt,
     });
   }

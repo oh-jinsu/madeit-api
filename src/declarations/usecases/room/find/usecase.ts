@@ -68,6 +68,7 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomModel>> {
           ownerId,
           goalLabel,
           goalSymbol,
+          maxParticipant,
           createdAt,
         }) => {
           const [participantCount, owner, performances] = await Promise.all([
@@ -112,6 +113,7 @@ export class FindRoomsUseCase implements UseCase<Params, ListOf<RoomModel>> {
               symbol: goalSymbol,
             },
             participantCount,
+            maxParticipant,
             createdAt,
           };
         },

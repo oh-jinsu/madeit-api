@@ -8,5 +8,6 @@ export type RoomModel = {
   readonly owner: UserModel;
   readonly performance: TotalPerformanceModel;
   readonly participantCount: number;
+  readonly maxParticipant: number;
   readonly createdAt: Date;
 };

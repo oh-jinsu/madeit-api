@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 import {
   AbstractController,
   ExceptionResponse,
@@ -23,6 +23,9 @@ export class RequestBody {
 
   @IsString()
   goal_symbol: string;
+
+  @IsNumber()
+  max_participant: number;
 }
 
 @Throttle(1, 0.1)
@@ -42,6 +45,7 @@ export class CreateRoomController extends AbstractController {
       goal_label: goalLabel,
       goal_type: goalType,
       goal_symbol: goalSymbol,
+      max_participant: maxParticipant,
     }: RequestBody,
   ) {
     if (
@@ -60,6 +64,7 @@ export class CreateRoomController extends AbstractController {
       goalLabel,
       goalType,
       goalSymbol,
+      maxParticipant,
     });
 
     return this.response(result);
@@ -81,6 +86,11 @@ export class CreateRoomController extends AbstractController {
         return {
           status: 400,
           message: "제목은 32글자 이하여야 합니다.",
+        };
+      case 4:
+        return {
+          status: 400,
+          message: "정원은 2명 이상이어야 합니다.",
         };
     }
   }

@@ -51,6 +51,7 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
           ownerId,
           goalLabel,
           goalSymbol,
+          maxParticipant,
           createdAt,
         } = await this.roomRepository.findOne({
           where: {
@@ -100,6 +101,7 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<Params, RoomModel[]> {
             symbol: goalSymbol,
           },
           participantCount,
+          maxParticipant,
           createdAt,
         };
       }),

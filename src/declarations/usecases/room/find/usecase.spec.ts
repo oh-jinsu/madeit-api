@@ -17,6 +17,7 @@ describe("Try to find rooms", () => {
       goalLabel: "goal label",
       goalType: "done",
       goalSymbol: "g",
+      maxParticipant: 10,
       createdAt: new Date(),
     })),
   );

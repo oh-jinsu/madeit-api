@@ -60,6 +60,11 @@ export class CreateParticipantController extends AbstractController {
           status: 409,
           message: "이미 가입한 채팅방입니다.",
         };
+      case 4:
+        return {
+          status: 409,
+          message: "정원이 가득 찼습니다.",
+        };
     }
   }
 }

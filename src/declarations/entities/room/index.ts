@@ -23,6 +23,9 @@ export class RoomEntity {
   @Column()
   goalSymbol: string;
 
+  @Column()
+  maxParticipant: number;
+
   @CreateDateColumn()
   createdAt: Date;
 }

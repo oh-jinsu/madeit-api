@@ -66,13 +66,16 @@ describe("Try to create a room", () => {
     userRepository,
   );
 
-  it("should fail for the too short title", async () => {
+  it("should fail for an absent user", async () => {
+    userRepository.findOne.mockResolvedValueOnce(null);
+
     const accessToken = "an access token";
-    const title = "타";
+    const title = Array(32).fill("가").join("");
     const description = "a description";
     const goalLabel = "성공률";
     const goalType = "done";
     const goalSymbol = "%";
+    const maxParticipant = 10;
 
     const result = await usecase.execute({
       accessToken,
@@ -81,6 +84,7 @@ describe("Try to create a room", () => {
       goalLabel,
       goalType,
       goalSymbol,
+      maxParticipant,
     });
 
     if (!result.isException()) {
@@ -90,13 +94,14 @@ describe("Try to create a room", () => {
     expect(result.code).toBe(1);
   });
 
-  it("should fail for the too long title", async () => {
+  it("should fail for the too short title", async () => {
     const accessToken = "an access token";
-    const title = Array(33).fill("가").join("");
+    const title = "타";
     const description = "a description";
     const goalLabel = "성공률";
     const goalType = "done";
     const goalSymbol = "%";
+    const maxParticipant = 10;
 
     const result = await usecase.execute({
       accessToken,
@@ -105,6 +110,7 @@ describe("Try to create a room", () => {
       goalLabel,
       goalType,
       goalSymbol,
+      maxParticipant,
     });
 
     if (!result.isException()) {
@@ -114,13 +120,14 @@ describe("Try to create a room", () => {
     expect(result.code).toBe(2);
   });
 
-  it("should be ok", async () => {
+  it("should fail for the too long title", async () => {
     const accessToken = "an access token";
-    const title = Array(32).fill("가").join("");
+    const title = Array(33).fill("가").join("");
     const description = "a description";
     const goalLabel = "성공률";
     const goalType = "done";
     const goalSymbol = "%";
+    const maxParticipant = 10;
 
     const result = await usecase.execute({
       accessToken,
@@ -129,6 +136,59 @@ describe("Try to create a room", () => {
       goalLabel,
       goalType,
       goalSymbol,
+      maxParticipant,
+    });
+
+    if (!result.isException()) {
+      fail();
+    }
+
+    expect(result.code).toBe(3);
+  });
+
+  it("should fail for the too little participant", async () => {
+    const accessToken = "an access token";
+    const title = Array(32).fill("가").join("");
+    const description = "a description";
+    const goalLabel = "성공률";
+    const goalType = "done";
+    const goalSymbol = "%";
+    const maxParticipant = 1;
+
+    const result = await usecase.execute({
+      accessToken,
+      title,
+      description,
+      goalLabel,
+      goalType,
+      goalSymbol,
+      maxParticipant,
+    });
+
+    if (!result.isException()) {
+      fail();
+    }
+
+    expect(result.code).toBe(4);
+  });
+
+  it("should be ok", async () => {
+    const accessToken = "an access token";
+    const title = Array(32).fill("가").join("");
+    const description = "a description";
+    const goalLabel = "성공률";
+    const goalType = "done";
+    const goalSymbol = "%";
+    const maxParticipant = 10;
+
+    const result = await usecase.execute({
+      accessToken,
+      title,
+      description,
+      goalLabel,
+      goalType,
+      goalSymbol,
+      maxParticipant,
     });
 
     if (!result.isOk()) {

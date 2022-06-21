@@ -73,6 +73,16 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
       return new UseCaseException(3);
     }
 
+    const currentCount = await this.participantRepository.count({
+      where: {
+        roomId,
+      },
+    });
+
+    if (currentCount >= room.maxParticipant) {
+      return new UseCaseException(4);
+    }
+
     const newone = this.participantRepository.create({
       id: this.uuidProvider.generate(),
       userId: id,
@@ -126,6 +136,7 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
           value: performanceValue,
           symbol: room.goalSymbol,
         },
+        maxParticipant: room.maxParticipant,
         participantCount,
         createdAt: room.createdAt,
       },

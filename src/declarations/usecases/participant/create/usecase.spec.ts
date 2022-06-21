@@ -40,6 +40,7 @@ describe("Try to create a participant", () => {
     goalLabel: "goal label",
     goalType: "done",
     goalSymbol: "g",
+    maxParticipant: 10,
     createdAt: new Date(),
   });
 
