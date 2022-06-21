@@ -6,6 +6,7 @@ import {
 } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase";
+import { SocketGateway } from "src/adapter/gateways/socket";
 
 export class MessageTypeRequestBody {
   type: "message";
@@ -34,7 +35,10 @@ export class DefaultRequestBody {
 @Throttle(1, 0.1)
 @Controller("chats")
 export class CreateChatController extends AbstractController {
-  constructor(private readonly usecase: CreateChatUseCase) {
+  constructor(
+    private readonly usecase: CreateChatUseCase,
+    private readonly socketGateway: SocketGateway,
+  ) {
     super();
   }
 
@@ -112,6 +116,12 @@ export class CreateChatController extends AbstractController {
       roomId,
       ...params,
     });
+
+    if (result.isOk()) {
+      this.socketGateway
+        .getRoom(result.value.roomId)
+        .emit("chat-created", result);
+    }
 
     return this.response(result);
   }

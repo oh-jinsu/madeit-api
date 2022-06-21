@@ -4,7 +4,8 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
-import { Server, Socket } from "socket.io";
+import { BroadcastOperator, Server, Socket } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { VerifyAuthUseCase } from "src/declarations/usecases/auth/verify/usecase";
 import { FindMyRoomsUsecase } from "src/declarations/usecases/room/find_mine/usecase";
 
@@ -59,5 +60,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   getSocket(id: string): Socket {
     return this.sockets[id];
+  }
+
+  getRoom(id: string | string[]): BroadcastOperator<DefaultEventsMap, any> {
+    return this.server.to(id);
   }
 }
