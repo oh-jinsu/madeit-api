@@ -15,7 +15,7 @@ export class RequestBody {
 }
 
 @Throttle(1, 0.1)
-@Controller("participant")
+@Controller("participants")
 export class DeleteParticipantController extends AbstractController {
   constructor(
     private readonly usecase: DeleteParticipantUseCase,
