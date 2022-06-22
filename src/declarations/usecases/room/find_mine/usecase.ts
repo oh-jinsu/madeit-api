@@ -129,30 +129,14 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
             return null;
           }
 
-          const userEntity = await this.userRepository.findOne({
-            where: {
-              id: lastChatEntity.userId,
-            },
-          });
-
-          const user = {
-            id: userEntity.id,
-            name: userEntity.name,
-            email: userEntity.email,
-            avatarId: userEntity.avatarId,
-            updatedAt: userEntity.updatedAt,
-            createdAt: userEntity.createdAt,
-          };
-
           const common = {
             id: lastChatEntity.id,
             roomId: lastChatEntity.roomId,
-            user,
             createdAt: lastChatEntity.createdAt,
           };
 
           switch (lastChatEntity.type) {
-            case "message": {
+            case "notice": {
               const { message } = await this.chatMessageRepository.findOne({
                 where: {
                   chatId: lastChatEntity.id,
@@ -165,6 +149,35 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
                 ...common,
               };
             }
+            case "message": {
+              const { message } = await this.chatMessageRepository.findOne({
+                where: {
+                  chatId: lastChatEntity.id,
+                },
+              });
+
+              const userEntity = await this.userRepository.findOne({
+                where: {
+                  id: lastChatEntity.userId,
+                },
+              });
+
+              const user = {
+                id: userEntity.id,
+                name: userEntity.name,
+                email: userEntity.email,
+                avatarId: userEntity.avatarId,
+                updatedAt: userEntity.updatedAt,
+                createdAt: userEntity.createdAt,
+              };
+
+              return {
+                type: lastChatEntity.type,
+                message,
+                user,
+                ...common,
+              };
+            }
             case "image": {
               const chatImages = await this.chatImageRepository.find({
                 where: {
@@ -174,9 +187,25 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
 
               const imageIds = chatImages.map(({ imageId }) => imageId);
 
+              const userEntity = await this.userRepository.findOne({
+                where: {
+                  id: lastChatEntity.userId,
+                },
+              });
+
+              const user = {
+                id: userEntity.id,
+                name: userEntity.name,
+                email: userEntity.email,
+                avatarId: userEntity.avatarId,
+                updatedAt: userEntity.updatedAt,
+                createdAt: userEntity.createdAt,
+              };
+
               return {
                 type: lastChatEntity.type,
                 imageIds,
+                user,
                 ...common,
               };
             }
@@ -201,12 +230,28 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
                 },
               });
 
+              const userEntity = await this.userRepository.findOne({
+                where: {
+                  id: lastChatEntity.userId,
+                },
+              });
+
+              const user = {
+                id: userEntity.id,
+                name: userEntity.name,
+                email: userEntity.email,
+                avatarId: userEntity.avatarId,
+                updatedAt: userEntity.updatedAt,
+                createdAt: userEntity.createdAt,
+              };
+
               return {
                 type: lastChatEntity.type,
 
                 message,
                 imageIds,
                 isChecked,
+                user,
                 ...common,
               };
             }

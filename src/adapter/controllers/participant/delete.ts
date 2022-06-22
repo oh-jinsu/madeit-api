@@ -7,6 +7,7 @@ import {
 } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { SocketGateway } from "src/adapter/gateways/socket";
+import { CreateNoticeChatUseCase } from "src/declarations/usecases/chat/create_notice/usecase";
 import { DeleteParticipantUseCase } from "src/declarations/usecases/participant/delete/usecase";
 
 export class RequestBody {
@@ -18,7 +19,8 @@ export class RequestBody {
 @Controller("participants")
 export class DeleteParticipantController extends AbstractController {
   constructor(
-    private readonly usecase: DeleteParticipantUseCase,
+    private readonly deleteParticipantUseCase: DeleteParticipantUseCase,
+    private readonly createNoticeChatUseCase: CreateNoticeChatUseCase,
     private readonly socketGateway: SocketGateway,
   ) {
     super();
@@ -30,13 +32,24 @@ export class DeleteParticipantController extends AbstractController {
     @BearerToken() accessToken: string,
     @Body() { room_id: roomId }: RequestBody,
   ) {
-    const result = await this.usecase.execute({
+    const result = await this.deleteParticipantUseCase.execute({
       accessToken,
       roomId,
     });
 
     if (result.isOk()) {
-      await this.socketGateway.getSocket(result.value.userId).leave(roomId);
+      await this.socketGateway.getSocket(result.value.user.id).leave(roomId);
+
+      const notice = await this.createNoticeChatUseCase.execute({
+        roomId,
+        message: `${result.value.user.name}님이 방을 나갔습니다.`,
+      });
+
+      if (notice.isOk()) {
+        this.socketGateway
+          .getRoom(roomId)
+          .emit("chatted", this.mapSnakeCase(notice.value));
+      }
     }
 
     return this.response(result);

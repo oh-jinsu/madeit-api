@@ -89,30 +89,14 @@ export class FindChatsUseCase extends AuthorizedUseCase<
 
     const items = await Promise.all(
       chats.map(async ({ id: chatId, roomId, userId, type, createdAt }) => {
-        const userEntity = await this.userRepository.findOne({
-          where: {
-            id: userId,
-          },
-        });
-
-        const user = {
-          id: userEntity.id,
-          name: userEntity.name,
-          email: userEntity.email,
-          avatarId: userEntity.avatarId,
-          updatedAt: userEntity.updatedAt,
-          createdAt: userEntity.createdAt,
-        };
-
-        const chatModel = {
+        const common = {
           id: chatId,
           roomId,
-          user,
           createdAt,
         };
 
         switch (type) {
-          case "message": {
+          case "notice": {
             const { message } = await this.chatMessageRepository.findOne({
               where: {
                 chatId,
@@ -122,7 +106,36 @@ export class FindChatsUseCase extends AuthorizedUseCase<
             return {
               type,
               message,
-              ...chatModel,
+              ...common,
+            };
+          }
+          case "message": {
+            const { message } = await this.chatMessageRepository.findOne({
+              where: {
+                chatId,
+              },
+            });
+
+            const userEntity = await this.userRepository.findOne({
+              where: {
+                id: userId,
+              },
+            });
+
+            const user = {
+              id: userEntity.id,
+              name: userEntity.name,
+              email: userEntity.email,
+              avatarId: userEntity.avatarId,
+              updatedAt: userEntity.updatedAt,
+              createdAt: userEntity.createdAt,
+            };
+
+            return {
+              type,
+              message,
+              user,
+              ...common,
             };
           }
           case "image": {
@@ -134,10 +147,26 @@ export class FindChatsUseCase extends AuthorizedUseCase<
 
             const imageIds = chatImages.map(({ imageId }) => imageId);
 
+            const userEntity = await this.userRepository.findOne({
+              where: {
+                id: userId,
+              },
+            });
+
+            const user = {
+              id: userEntity.id,
+              name: userEntity.name,
+              email: userEntity.email,
+              avatarId: userEntity.avatarId,
+              updatedAt: userEntity.updatedAt,
+              createdAt: userEntity.createdAt,
+            };
+
             return {
               type,
               imageIds,
-              ...chatModel,
+              user,
+              ...common,
             };
           }
           case "photolog": {
@@ -161,12 +190,28 @@ export class FindChatsUseCase extends AuthorizedUseCase<
               },
             });
 
+            const userEntity = await this.userRepository.findOne({
+              where: {
+                id: userId,
+              },
+            });
+
+            const user = {
+              id: userEntity.id,
+              name: userEntity.name,
+              email: userEntity.email,
+              avatarId: userEntity.avatarId,
+              updatedAt: userEntity.updatedAt,
+              createdAt: userEntity.createdAt,
+            };
+
             return {
               type,
               message,
               imageIds,
               isChecked,
-              ...chatModel,
+              user,
+              ...common,
             };
           }
         }

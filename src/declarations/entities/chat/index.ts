@@ -12,7 +12,7 @@ export class ChatEntity {
   userId: string;
 
   @Column()
-  type: "message" | "image" | "photolog";
+  type: "notice" | "message" | "image" | "photolog";
 
   @CreateDateColumn()
   createdAt: Date;

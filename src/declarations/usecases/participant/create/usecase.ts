@@ -114,7 +114,7 @@ export class CreateParticipantUseCase extends AuthorizedUseCase<
       joinedAt: participant.joinedAt,
       user: {
         id: user.id,
-        name: user.id,
+        name: user.name,
         avatarId: user.avatarId,
         updatedAt: user.updatedAt,
         createdAt: user.createdAt,

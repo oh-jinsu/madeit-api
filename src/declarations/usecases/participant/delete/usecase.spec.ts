@@ -1,4 +1,5 @@
 import { ParticipantEntity } from "src/declarations/entities/participant";
+import { UserEntity } from "src/declarations/entities/user";
 import { MockAuthProvider } from "src/implementations/providers/auth/mock";
 import { MockRepository } from "src/implementations/repositories/mock";
 import { DeleteParticipantUseCase } from "./usecase";
@@ -23,9 +24,20 @@ describe("Try to create a participant", () => {
 
   participantRepository.delete.mockResolvedValue(null);
 
+  const userRepository = new MockRepository<UserEntity>();
+
+  userRepository.findOne.mockResolvedValue({
+    id: "an id",
+    name: "a name",
+    avatarId: "an avatar id",
+    updatedAt: new Date(),
+    createdAt: new Date(),
+  });
+
   const usecase = new DeleteParticipantUseCase(
     authProvider,
     participantRepository,
+    userRepository,
   );
 
   it("should fail for an invalid access token", async () => {

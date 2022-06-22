@@ -7,6 +7,7 @@ import {
 } from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { SocketGateway } from "src/adapter/gateways/socket";
+import { CreateNoticeChatUseCase } from "src/declarations/usecases/chat/create_notice/usecase";
 import { CreateParticipantUseCase } from "src/declarations/usecases/participant/create/usecase";
 
 export class RequestBody {
@@ -18,7 +19,8 @@ export class RequestBody {
 @Controller("participants")
 export class CreateParticipantController extends AbstractController {
   constructor(
-    private readonly usecase: CreateParticipantUseCase,
+    private readonly createParticipantUseCase: CreateParticipantUseCase,
+    private readonly createNoticeChatUseCase: CreateNoticeChatUseCase,
     private readonly socketGateway: SocketGateway,
   ) {
     super();
@@ -29,12 +31,23 @@ export class CreateParticipantController extends AbstractController {
     @BearerToken() accessToken: string,
     @Body() { room_id: roomId }: RequestBody,
   ) {
-    const result = await this.usecase.execute({
+    const result = await this.createParticipantUseCase.execute({
       accessToken,
       roomId,
     });
 
     if (result.isOk()) {
+      const notice = await this.createNoticeChatUseCase.execute({
+        roomId,
+        message: `${result.value.user.name}님이 방에 참여했습니다.`,
+      });
+
+      if (notice.isOk()) {
+        this.socketGateway
+          .getRoom(roomId)
+          .emit("chatted", this.mapSnakeCase(notice.value));
+      }
+
       await this.socketGateway
         .getSocket(result.value.user.id)
         .join(result.value.room.id);

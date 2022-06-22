@@ -9,6 +9,8 @@ import {
 import { AuthProvider } from "src/declarations/providers/auth";
 import { ParticipantEntity } from "src/declarations/entities/participant";
 import { Repository } from "typeorm";
+import { UserEntity } from "src/declarations/entities/user";
+import { UserModel } from "src/declarations/models/user";
 
 export type Params = {
   readonly accessToken: string;
@@ -16,7 +18,8 @@ export type Params = {
 };
 
 export type Model = {
-  readonly userId: string;
+  readonly roomId: string;
+  readonly user: UserModel;
 };
 
 @Injectable()
@@ -25,6 +28,8 @@ export class DeleteParticipantUseCase extends AuthorizedUseCase<Params, Model> {
     authProvider: AuthProvider,
     @InjectRepository(ParticipantEntity)
     private readonly participantRepository: Repository<ParticipantEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {
     super(authProvider);
   }
@@ -46,8 +51,24 @@ export class DeleteParticipantUseCase extends AuthorizedUseCase<Params, Model> {
 
     await this.participantRepository.delete(participant.id);
 
+    const userEntity = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    const user = {
+      id: userEntity.id,
+      name: userEntity.name,
+      email: userEntity.email,
+      avatarId: userEntity.avatarId,
+      updatedAt: userEntity.updatedAt,
+      createdAt: userEntity.createdAt,
+    };
+
     return new UseCaseOk({
-      userId,
+      roomId,
+      user,
     });
   }
 }
