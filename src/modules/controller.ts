@@ -9,6 +9,8 @@ import { FindChatsController } from "src/adapter/controllers/chat/find";
 import { UploadImageController } from "src/adapter/controllers/image/upload";
 import { CreateParticipantController } from "src/adapter/controllers/participant/create";
 import { DeleteParticipantController } from "src/adapter/controllers/participant/delete";
+import { CountReactionsController } from "src/adapter/controllers/reaction/count";
+import { CountMyReactionsController } from "src/adapter/controllers/reaction/count_mine";
 import { CreateRoomController } from "src/adapter/controllers/room/create";
 import { FindRoomsController } from "src/adapter/controllers/room/find";
 import { FindMyRoomsController } from "src/adapter/controllers/room/find_mine";
@@ -38,6 +40,9 @@ import { SocketGateway } from "src/adapter/gateways/socket";
     FindChatsController,
     CreateChatController,
     // Chat Module
+    CountReactionsController,
+    CountMyReactionsController,
+    // Reaction Module
     UploadImageController,
     // Image Module
   ],

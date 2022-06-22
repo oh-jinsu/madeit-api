@@ -27,6 +27,11 @@ import { ChatImageEntity } from "src/declarations/entities/chat/image";
 import { CreateChatUseCase } from "src/declarations/usecases/chat/create/usecase";
 import { FindChatsUseCase } from "src/declarations/usecases/chat/find/usecase";
 import { CreateNoticeChatUseCase } from "src/declarations/usecases/chat/create_notice/usecase";
+import { GoodReactionEntity } from "src/declarations/entities/reactions/good";
+import { LoveReactionEntity } from "src/declarations/entities/reactions/love";
+import { ComeOnReactionEntity } from "src/declarations/entities/reactions/come_on";
+import { CountMyReactionsUseCase } from "src/declarations/usecases/reaction/count_mine/usecase";
+import { CountReactionsUseCase } from "src/declarations/usecases/reaction/count/usecase";
 
 @Global()
 @Module({
@@ -42,6 +47,9 @@ import { CreateNoticeChatUseCase } from "src/declarations/usecases/chat/create_n
       ChatMessageEntity,
       ChatImageEntity,
       ChatPhotologEntity,
+      GoodReactionEntity,
+      LoveReactionEntity,
+      ComeOnReactionEntity,
     ]),
   ],
   providers: [
@@ -66,6 +74,9 @@ import { CreateNoticeChatUseCase } from "src/declarations/usecases/chat/create_n
     CreateChatUseCase,
     CreateNoticeChatUseCase,
     // Chat Module
+    CountReactionsUseCase,
+    CountMyReactionsUseCase,
+    // Reaction Module
     UploadImageUseCase,
     // Image Module
   ],
@@ -91,6 +102,9 @@ import { CreateNoticeChatUseCase } from "src/declarations/usecases/chat/create_n
     CreateChatUseCase,
     CreateNoticeChatUseCase,
     // Chat Module
+    CountReactionsUseCase,
+    CountMyReactionsUseCase,
+    // Reaction Module
     UploadImageUseCase,
     // Image Module
   ],
