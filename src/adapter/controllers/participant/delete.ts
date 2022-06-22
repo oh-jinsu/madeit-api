@@ -60,7 +60,7 @@ export class DeleteParticipantController extends AbstractController {
       case 1:
         return {
           status: 409,
-          message: "채팅방에 참여하고 있지 않습니다.",
+          message: "방에 참여하고 있지 않습니다.",
         };
     }
   }

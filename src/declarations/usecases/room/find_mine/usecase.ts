@@ -135,41 +135,42 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
             createdAt: lastChatEntity.createdAt,
           };
 
-          switch (lastChatEntity.type) {
-            case "notice": {
-              const { message } = await this.chatMessageRepository.findOne({
-                where: {
-                  chatId: lastChatEntity.id,
-                },
-              });
+          if (lastChatEntity.type === "notice") {
+            const { message } = await this.chatMessageRepository.findOne({
+              where: {
+                chatId: lastChatEntity.id,
+              },
+            });
 
-              return {
-                type: lastChatEntity.type,
-                message,
-                ...common,
-              };
-            }
+            return {
+              type: lastChatEntity.type,
+              message,
+              ...common,
+            };
+          }
+
+          const userEntity = await this.userRepository.findOne({
+            where: {
+              id: lastChatEntity.userId,
+            },
+          });
+
+          const user = {
+            id: userEntity?.id || "none",
+            name: userEntity?.name || "탈퇴한 이용자",
+            email: userEntity?.email,
+            avatarId: userEntity?.avatarId,
+            updatedAt: userEntity?.updatedAt || new Date(),
+            createdAt: userEntity?.createdAt || new Date(),
+          };
+
+          switch (lastChatEntity.type) {
             case "message": {
               const { message } = await this.chatMessageRepository.findOne({
                 where: {
                   chatId: lastChatEntity.id,
                 },
               });
-
-              const userEntity = await this.userRepository.findOne({
-                where: {
-                  id: lastChatEntity.userId,
-                },
-              });
-
-              const user = {
-                id: userEntity.id,
-                name: userEntity.name,
-                email: userEntity.email,
-                avatarId: userEntity.avatarId,
-                updatedAt: userEntity.updatedAt,
-                createdAt: userEntity.createdAt,
-              };
 
               return {
                 type: lastChatEntity.type,
@@ -186,21 +187,6 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
               });
 
               const imageIds = chatImages.map(({ imageId }) => imageId);
-
-              const userEntity = await this.userRepository.findOne({
-                where: {
-                  id: lastChatEntity.userId,
-                },
-              });
-
-              const user = {
-                id: userEntity.id,
-                name: userEntity.name,
-                email: userEntity.email,
-                avatarId: userEntity.avatarId,
-                updatedAt: userEntity.updatedAt,
-                createdAt: userEntity.createdAt,
-              };
 
               return {
                 type: lastChatEntity.type,
@@ -229,21 +215,6 @@ export class FindMyRoomsUsecase extends AuthorizedUseCase<
                   chatId: lastChatEntity.id,
                 },
               });
-
-              const userEntity = await this.userRepository.findOne({
-                where: {
-                  id: lastChatEntity.userId,
-                },
-              });
-
-              const user = {
-                id: userEntity.id,
-                name: userEntity.name,
-                email: userEntity.email,
-                avatarId: userEntity.avatarId,
-                updatedAt: userEntity.updatedAt,
-                createdAt: userEntity.createdAt,
-              };
 
               return {
                 type: lastChatEntity.type,

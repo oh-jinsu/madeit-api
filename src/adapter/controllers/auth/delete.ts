@@ -1,5 +1,8 @@
 import { Controller, Delete, HttpCode } from "@nestjs/common";
-import { AbstractController } from "src/adapter/common/adapter";
+import {
+  AbstractController,
+  ExceptionResponse,
+} from "src/adapter/common/adapter";
 import { BearerToken } from "src/adapter/decorators/bearer_token";
 import { DeleteAuthUseCase } from "src/declarations/usecases/auth/delete/usecase";
 
@@ -15,5 +18,15 @@ export class DeleteAuthController extends AbstractController {
     const result = await this.usecase.execute({ accessToken });
 
     return this.response(result);
+  }
+
+  protected inform(code: number): ExceptionResponse {
+    switch (code) {
+      case 1:
+        return {
+          status: 409,
+          message: "운영하고 있는 방이 있습니다.",
+        };
+    }
   }
 }

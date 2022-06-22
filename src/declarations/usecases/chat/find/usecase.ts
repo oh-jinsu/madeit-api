@@ -95,41 +95,42 @@ export class FindChatsUseCase extends AuthorizedUseCase<
           createdAt,
         };
 
-        switch (type) {
-          case "notice": {
-            const { message } = await this.chatMessageRepository.findOne({
-              where: {
-                chatId,
-              },
-            });
+        if (type === "notice") {
+          const { message } = await this.chatMessageRepository.findOne({
+            where: {
+              chatId,
+            },
+          });
 
-            return {
-              type,
-              message,
-              ...common,
-            };
-          }
+          return {
+            type,
+            message,
+            ...common,
+          };
+        }
+
+        const userEntity = await this.userRepository.findOne({
+          where: {
+            id: userId,
+          },
+        });
+
+        const user = {
+          id: userEntity?.id || "none",
+          name: userEntity?.name || "탈퇴한 이용자",
+          email: userEntity?.email,
+          avatarId: userEntity?.avatarId,
+          updatedAt: userEntity?.updatedAt || new Date(),
+          createdAt: userEntity?.createdAt || new Date(),
+        };
+
+        switch (type) {
           case "message": {
             const { message } = await this.chatMessageRepository.findOne({
               where: {
                 chatId,
               },
             });
-
-            const userEntity = await this.userRepository.findOne({
-              where: {
-                id: userId,
-              },
-            });
-
-            const user = {
-              id: userEntity.id,
-              name: userEntity.name,
-              email: userEntity.email,
-              avatarId: userEntity.avatarId,
-              updatedAt: userEntity.updatedAt,
-              createdAt: userEntity.createdAt,
-            };
 
             return {
               type,
@@ -146,21 +147,6 @@ export class FindChatsUseCase extends AuthorizedUseCase<
             });
 
             const imageIds = chatImages.map(({ imageId }) => imageId);
-
-            const userEntity = await this.userRepository.findOne({
-              where: {
-                id: userId,
-              },
-            });
-
-            const user = {
-              id: userEntity.id,
-              name: userEntity.name,
-              email: userEntity.email,
-              avatarId: userEntity.avatarId,
-              updatedAt: userEntity.updatedAt,
-              createdAt: userEntity.createdAt,
-            };
 
             return {
               type,
@@ -189,21 +175,6 @@ export class FindChatsUseCase extends AuthorizedUseCase<
                 chatId,
               },
             });
-
-            const userEntity = await this.userRepository.findOne({
-              where: {
-                id: userId,
-              },
-            });
-
-            const user = {
-              id: userEntity.id,
-              name: userEntity.name,
-              email: userEntity.email,
-              avatarId: userEntity.avatarId,
-              updatedAt: userEntity.updatedAt,
-              createdAt: userEntity.createdAt,
-            };
 
             return {
               type,

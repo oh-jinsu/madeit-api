@@ -66,12 +66,12 @@ export class CreateParticipantController extends AbstractController {
       case 2:
         return {
           status: 404,
-          message: "채팅방을 찾지 못했습니다.",
+          message: "방을 찾지 못했습니다.",
         };
       case 3:
         return {
           status: 409,
-          message: "이미 가입한 채팅방입니다.",
+          message: "이미 가입한 방입니다.",
         };
       case 4:
         return {
